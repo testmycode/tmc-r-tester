@@ -12,6 +12,8 @@ LazyData: true
 Depends:
   testthat,
   jsonlite
+Suggests:
+  lintr
 Collate:
   'ResultsJsonParser.R'
   'TestthatResultReader.R'

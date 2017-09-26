@@ -1,0 +1,53 @@
+[
+    {
+        "status": "pass",
+        "name": "RetTrue works.",
+        "message": "",
+        "backtrace": "",
+        "points": [
+            "r1",
+            "r1.1"
+        ]
+    },
+    {
+        "status": "pass",
+        "name": "RetOne works.",
+        "message": "",
+        "backtrace": "",
+        "points": [
+            "r1",
+            "r1.2"
+        ]
+    },
+    {
+        "status": "pass",
+        "name": "Add works.",
+        "message": "",
+        "backtrace": "",
+        "points": [
+            "r1",
+            "r1.3",
+            "r1.4"
+        ]
+    },
+    {
+        "status": "fail",
+        "name": "RetFalse returns true",
+        "message": "Failed with call: expect_true, RetFalse()\nRetFalse() isn't true.\n",
+        "backtrace": "",
+        "points": [
+            "r1",
+            "r1.5"
+        ]
+    },
+    {
+        "status": "pass",
+        "name": "RetTrue works but there are no points.",
+        "message": "",
+        "backtrace": "",
+        "points": [
+            "r1"
+        ]
+    }
+]
+

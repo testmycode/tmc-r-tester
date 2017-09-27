@@ -9,9 +9,9 @@ runTests <- function(projectPath, print=FALSE) {
   tmcrTestRunnerProjectPath <- getwd()
 
   #runs test for project, returns testthatOuput with added points.
-  testthatOutput <- .RunTestsProject(projectPath)
+  test_results <- .RunTestsProject(projectPath)
 
-  jsonResults <- .CreateJsonResults(testthatOutput)
+  jsonResults <- .CreateJsonResults(test_results)
   .WriteJson(jsonResults)
 
   if (print) {
@@ -24,16 +24,16 @@ runTests <- function(projectPath, print=FALSE) {
 .RunTestsProject <- function(projectPath) {
   setwd(projectPath)
 
-  testthatOutput <- list()
+  test_results <- list()
 
   #Lists all the files in the path beginning with "test" and ending in ".R"
   testFiles <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
   for (testFile in testFiles) {
-    testFileOutput <- .RunTestsFile(testFile)
-    testthatOutput <- c(testthatOutput, testFileOutput)
+    file_results <- .RunTestsFile(testFile)
+    test_results <- c(test_results, file_results)
   }
-  return(testthatOutput)
+  return(test_results)
 }
 
 .RunTestsFile <- function(filePath) {
@@ -41,9 +41,10 @@ runTests <- function(projectPath, print=FALSE) {
   .GlobalEnv$points_for_all_tests <- list()
 
   testFileOutput <- test_file(filePath, reporter = "silent")
-  testFileOutput <- .AddPointsToTestOutput(testFileOutput)
 
-  return(testFileOutput)
+  test_file_results <- .create_file_results(testFileOutput, points, .GlobalEnv$points_for_all_tests)
+
+  return(test_file_results)
 }
 
 .AddPointsToTestOutput <- function(testOutput) {

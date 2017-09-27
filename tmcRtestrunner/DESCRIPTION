@@ -16,6 +16,6 @@ Suggests:
   lintr
 Collate:
   'ResultsJsonParser.R'
-  'TestthatResultReader.R'
+  'results_creator.R'
   'RunTests.R'
   'getAvailablePoints.R'

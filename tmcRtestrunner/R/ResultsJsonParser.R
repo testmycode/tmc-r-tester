@@ -1,55 +1,21 @@
 #Creates JSON based on the test file.
-.CreateJsonResults <- function(testthatOutput) {
-  results = list()
-  for (test in testthatOutput) {
-    testName <- test$test
-    testPoints <- test$points
-    testMessage <- ""
-
-    if (.CheckIfTestPassed(test)) {
-      testStatus <- "pass"
-    } else {
-      testStatus <- "fail"
-      testMessage <- .CreateMessageForTestWithFailures(test)
-    }
-
-    testResult <- .CreateJsonTestResult(testStatus, testName, testMessage,testPoints, "")
-    #Add test result to results
-    results[[length(results)+1]] <- testResult
+.CreateJsonResults <- function(test_results) {
+  json_results <- list()
+  for (test_result in test_results) {
+    test_json_result <- .CreateJsonTestResult(test_result)
+    json_results[[length(json_results) + 1]] <- test_json_result
   }
-  return (results)
+  return (json_results)
 }
 
 #Creates JSON for each different test case.
-.CreateJsonTestResult <- function(testStatus, testName, testMessage,
-                                  testPoints, backtrace) {
-  testResult <- list(status=unbox(testStatus),
-                     name=unbox(format(testName)),
-                     message=unbox(testMessage),
-                     backtrace=unbox(backtrace),
-                     points=testPoints)
+.CreateJsonTestResult <- function(test_result) {
+  testResult <- list(status=unbox(test_result$status),
+                     name=unbox(format(test_result$name)),
+                     message=unbox(test_result$message),
+                     backtrace=test_result$backtrace,
+                     points=test_result$points)
   return(testResult)
-}
-
-#Returns message from failed results
-#Currently supports only results that used calls
-.MessageFromFailedResult <- function(result) {
-  if (is.null(result$call)) {
-    return("")
-  }
-  #language that failed the test. for example call expect_equal(1,2)
-  language <- toString(result$call[[1]])
-  return (paste(sep="", "Failed with call: ", language,"\n", result$message))
-}
-
-.CreateMessageForTestWithFailures <- function(test) {
-  testMessage <- ""
-  for (result in test$results) {
-    if (format(result) != "As expected") {
-      testMessage <- paste(sep = "", testMessage, .MessageFromFailedResult(result))
-    }
-  }
-  return(testMessage)
 }
 
 #Writes JSON based on the whole test result.

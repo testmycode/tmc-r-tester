@@ -8,9 +8,7 @@ test_that("Test pass in simple_all_tests_pass", {
   results <- .RunTestsProject(simple_all_tests_pass_project_path)
 
   for (i in 1:3) {
-    string <- format(results[[i]]$results[[1]])
-    string2 <- "As expected"
-    expect_equal(string, string2)
+    expect_equal(results[[i]]$status, "pass")
   }
 })
 

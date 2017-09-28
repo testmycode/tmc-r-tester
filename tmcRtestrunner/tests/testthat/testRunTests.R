@@ -5,30 +5,32 @@ simple_all_tests_pass_project_path <- paste(sep = "", test_resources_dir, "/simp
 simple_some_tests_fail_project_path <- paste(sep = "", test_resources_dir, "/simple_some_tests_fail")
 
 test_that("Test pass in simple_all_tests_pass", {
-  results <- .RunTestsProject(simple_all_tests_pass_project_path)
+  test_results <- .run_tests_project(simple_all_tests_pass_project_path)
 
-  for (i in 1:3) {
-    expect_equal(results[[i]]$status, "pass")
+  #All tests should pass:
+  for (i in length(test_results)) {
+    expect_equal(test_results[[i]]$status, "pass")
   }
 })
 
 #Tests that all exercise entrys store the point for all tests.
 test_that("Tests that pass in simple_all_tests_pass all have the point for all tests", {
-  results <- .RunTestsProject(simple_all_tests_pass_project_path)
+  test_results <- .run_tests_project(simple_all_tests_pass_project_path)
   point <- "r1"
   for (i in 1:3) {
-    vec1 <- results[[i]]$points
+    vec1 <- test_results[[i]]$points
     expect_true(point %in% vec1)
   }
 })
 
-#Tests if the hidden function .AddPointsToTestOutput works as intended.
-#It should add points to the dataframe based on which the result-file is created.
-test_that("Points are added accordingly after calling .AddPointsToTestOutput", {
-  testFileOutput <- test_file(paste(sep="", simple_all_tests_pass_project_path, "/tests/testthat/testMain.R"), reporter="silent")
-  expect_equal(testFileOutput[[1]]$points, NULL)
-  testFileOutput <- .AddPointsToTestOutput(testFileOutput)
-  expect_false(is.null(testFileOutput[[1]]$points))
+test_that(".run_tests_project adds points accordingly for simple_all_tests_pass", {
+  test_results <- .run_tests_project(simple_all_tests_pass_project_path)
+  #"RetTrue works." points
+  expect_equal(test_results[[1]]$points, c("r1", "r1.1"))
+  #"RetOne works." points
+  expect_equal(test_results[[2]]$points, c("r1", "r1.2"))
+  #"Add works." points
+  expect_equal(test_results[[3]]$points, c("r1", "r1.3", "r1.4"))
 })
 
 test_that("RunTests works as intended", {
@@ -36,17 +38,19 @@ test_that("RunTests works as intended", {
   expect_true(file.exists(paste(sep="",simple_all_tests_pass_project_path, "/.results.json")))
 })
 
-test_that("Not all tests pass in simple_some_tests_fail", {
-  results <- .RunTestsProject(simple_some_tests_fail_project_path)
-  all_tests_pass <- TRUE
-  pass_string <- "As expected"
-  for (i in 1:4) {
-    string <- format(results[[i]]$results[[1]])
-    if(!isTRUE(all.equal(string, pass_string))) {
-      all_tests_pass <- FALSE
-    }
-  }
-  expect_false(all_tests_pass)
+test_that("Not all tests pass in simple_some_tests_fail.", {
+  test_results <- .run_tests_project(simple_some_tests_fail_project_path)
+
+  #"RetTrue works." should pass
+  expect_equal(test_results[[1]]$status, "pass")
+  #"RetOne works." should pass
+  expect_equal(test_results[[2]]$status, "pass")
+  #"Add works." should pass
+  expect_equal(test_results[[3]]$status, "pass")
+  #"RetFalse returns true" should FAIL
+  expect_equal(test_results[[4]]$status, "fail")
+  #"RetTrue works but there asre no points." should pass
+  expect_equal(test_results[[5]]$status, "pass")
 })
 
 test_that("RunTests works even when some of the tests are failing", {

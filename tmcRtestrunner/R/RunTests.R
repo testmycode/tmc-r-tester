@@ -9,7 +9,7 @@ runTests <- function(projectPath, print=FALSE) {
   tmcrTestRunnerProjectPath <- getwd()
 
   #runs test for project, returns testthatOuput with added points.
-  test_results <- .RunTestsProject(projectPath)
+  test_results <- .run_tests_project(projectPath)
 
   jsonResults <- .CreateJsonResults(test_results)
   .WriteJson(jsonResults)
@@ -21,7 +21,7 @@ runTests <- function(projectPath, print=FALSE) {
   setwd(tmcrTestRunnerProjectPath)
 }
 
-.RunTestsProject <- function(projectPath) {
+.run_tests_project <- function(projectPath) {
   setwd(projectPath)
 
   test_results <- list()
@@ -30,13 +30,13 @@ runTests <- function(projectPath, print=FALSE) {
   testFiles <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
   for (testFile in testFiles) {
-    file_results <- .RunTestsFile(testFile)
+    file_results <- .run_tests_file(testFile)
     test_results <- c(test_results, file_results)
   }
   return(test_results)
 }
 
-.RunTestsFile <- function(filePath) {
+.run_tests_file <- function(filePath) {
   .GlobalEnv$points <- list()
   .GlobalEnv$points_for_all_tests <- list()
 
@@ -45,23 +45,6 @@ runTests <- function(projectPath, print=FALSE) {
   test_file_results <- .create_file_results(testFileOutput, points, .GlobalEnv$points_for_all_tests)
 
   return(test_file_results)
-}
-
-.AddPointsToTestOutput <- function(testOutput) {
-  for (i in 1 : length(testOutput)) {
-    testOutput[[i]]$points <- .GetTestPoints(testOutput[[i]]$test)
-  }
-  return(testOutput)
-}
-
-.GetTestPoints <- function(testName) {
-  if (is.null(points[[testName]])) {
-    testPoints <- vector()
-  } else {
-    testPoints <- points[[testName]]
-  }
-  testPoints <- c(.GlobalEnv$points_for_all_tests, testPoints)
-  return(testPoints)
 }
 
 runTestsWithDefault <- function(bol) {

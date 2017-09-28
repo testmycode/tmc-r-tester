@@ -1,0 +1,3 @@
+with_defaults(object_length_linter=NULL,
+  absolute_path_linter=NULL,
+  single_quotes_linter=NULL)

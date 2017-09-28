@@ -10,11 +10,11 @@
 
 #Creates JSON for each different test case.
 .create_json_test_result <- function(test_result) {
-  test_result <- list(status=unbox(test_result$status),
-                     name=unbox(format(test_result$name)),
-                     message=unbox(test_result$message),
-                     backtrace=test_result$backtrace,
-                     points=test_result$points)
+  test_result <- list(status = unbox(test_result$status),
+                     name = unbox(format(test_result$name)),
+                     message = unbox(test_result$message),
+                     backtrace = test_result$backtrace,
+                     points = test_result$points)
   return(test_result)
 }
 

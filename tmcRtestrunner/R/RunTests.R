@@ -27,7 +27,7 @@ run_tests <- function(project_path, print=FALSE) {
   test_results <- list()
 
   #Lists all the files in the path beginning with "test" and ending in ".R"
-  test_files <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
   for (test_file in test_files) {
     file_results <- .run_tests_file(test_file)

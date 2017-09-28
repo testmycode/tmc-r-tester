@@ -11,11 +11,11 @@ run_tests <- function(project_path, print=FALSE) {
   #runs test for project, returns testthatOuput with added points.
   test_results <- .run_tests_project(project_path)
 
-  jsonResults <- .CreateJsonResults(test_results)
-  .WriteJson(jsonResults)
+  json_results <- .create_json_results(test_results)
+  .write_json(json_results)
 
   if (print) {
-    .PrintResultsFromJson(jsonResults)
+    .print_results_from_json(json_results)
   }
 
   setwd(tmc_r_rest_runner_project_path)
@@ -37,12 +37,12 @@ run_tests <- function(project_path, print=FALSE) {
 }
 
 .run_tests_file <- function(file_path) {
-  .global_env$points <- list()
-  .global_env$points_for_all_tests <- list()
+  .GlobalEnv$points <- list()
+  .GlobalEnv$points_for_all_tests <- list()
 
   test_file_output <- test_file(file_path, reporter = "silent")
 
-  test_file_results <- .create_file_results(test_file_output, points, .global_env$points_for_all_tests)
+  test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
 
   return(test_file_results)
 }

@@ -1,7 +1,7 @@
 library('testthat')
 source('../../R/week1.R')
 
-pointsForAllTests(c("r4"))
+points_for_all_tests(c("r4"))
 
 help_A <- matrix(c(3, 5, 6, 1/2, sqrt(5), 16, 0, 2, 0),nrow = 3, ncol = 3, byrow = TRUE)
 

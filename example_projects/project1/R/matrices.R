@@ -1,3 +1,3 @@
-transposeMatrix <- function(matrix) {
+transpose_matrix <- function(matrix) {
     return(t(matrix))
 }

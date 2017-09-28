@@ -6,16 +6,16 @@ test <- function(a,point,c){
   }
 }
 ###tempOverride
-pointsForAllTests<-function(point){
+points_for_all_tests<-function(point){
   all_available_points<<-c(all_available_points,point)
 }
 
-getAvailablePoints <-function(project_path){
+get_available_points <-function(project_path){
   setwd(project_path)
   all_available_points <<- c()
-  testFiles <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
-  for (testFile in testFiles) {
-    test_file(testFile, reporter = "silent",load_helpers=FALSE)
+  test_files <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  for (test_file in test_files) {
+    test_file(test_file, reporter = "silent",load_helpers=FALSE)
   }
   return(all_available_points)
 }

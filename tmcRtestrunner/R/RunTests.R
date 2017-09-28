@@ -5,11 +5,11 @@
 #  project_path: The absolute path to the root of the project being tested.
 #  print: If TRUE, prints results; if not, not. DEFAULT is FALSE.
 #
-runTests <- function(projectPath, print=FALSE) {
-  tmcrTestRunnerProjectPath <- getwd()
+run_tests <- function(project_path, print=FALSE) {
+  tmc_r_rest_runner_project_path <- getwd()
 
   #runs test for project, returns testthatOuput with added points.
-  test_results <- .run_tests_project(projectPath)
+  test_results <- .run_tests_project(project_path)
 
   jsonResults <- .CreateJsonResults(test_results)
   .WriteJson(jsonResults)
@@ -18,35 +18,35 @@ runTests <- function(projectPath, print=FALSE) {
     .PrintResultsFromJson(jsonResults)
   }
 
-  setwd(tmcrTestRunnerProjectPath)
+  setwd(tmc_r_rest_runner_project_path)
 }
 
-.run_tests_project <- function(projectPath) {
-  setwd(projectPath)
+.run_tests_project <- function(project_path) {
+  setwd(project_path)
 
   test_results <- list()
 
   #Lists all the files in the path beginning with "test" and ending in ".R"
-  testFiles <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  test_files <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
-  for (testFile in testFiles) {
-    file_results <- .run_tests_file(testFile)
+  for (test_file in test_files) {
+    file_results <- .run_tests_file(test_file)
     test_results <- c(test_results, file_results)
   }
   return(test_results)
 }
 
-.run_tests_file <- function(filePath) {
-  .GlobalEnv$points <- list()
-  .GlobalEnv$points_for_all_tests <- list()
+.run_tests_file <- function(file_path) {
+  .global_env$points <- list()
+  .global_env$points_for_all_tests <- list()
 
-  testFileOutput <- test_file(filePath, reporter = "silent")
+  test_file_output <- test_file(file_path, reporter = "silent")
 
-  test_file_results <- .create_file_results(testFileOutput, points, .GlobalEnv$points_for_all_tests)
+  test_file_results <- .create_file_results(test_file_output, points, .global_env$points_for_all_tests)
 
   return(test_file_results)
 }
 
-runTestsWithDefault <- function(bol) {
-  runTests(getwd(), bol)
+run_tests_with_default <- function(bol) {
+  run_tests(getwd(), bol)
 }

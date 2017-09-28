@@ -1,15 +1,15 @@
-RetTrue <- function() {
+ret_true <- function() {
   return(TRUE)
 }
 
-RetOne <- function() {
+ret_one <- function() {
   return(1)
 }
 
-Add <- function(a, b) {
+add <- function(a, b) {
   return(a + b)
 }
 
-RetFalse <- function() {
+ret_false <- function() {
   return(FALSE)
 }

@@ -1,28 +1,28 @@
-library('testthat')
+library("testthat")
 
 source("../../R/main.R")
 
-pointsForAllTests(c("r1"))
+points_for_all_tests(c("r1"))
 
-test("RetTrue works.", c("r1.1"), {
-  expect_true(RetTrue())
+test("ret_true works.", c("r1.1"), {
+  expect_true(ret_true())
 })
 
-test("RetOne works.", c("r1.2"), {
-  expect_equal(RetOne(), 1)
+test("ret_one works.", c("r1.2"), {
+  expect_equal(ret_one(), 1)
 })
 
-test("Add works.", c("r1.3", "r1.4"), {
-  expect_equal(Add(1, 1), 2)
-  expect_equal(Add(0, 1), 1)
-  expect_equal(Add(0, 0), 0)
-  expect_equal(Add(5, 5), 10)
+test("add works.", c("r1.3", "r1.4"), {
+  expect_equal(add(1, 1), 2)
+  expect_equal(add(0, 1), 1)
+  expect_equal(add(0, 0), 0)
+  expect_equal(add(5, 5), 10)
 })
 
-test("RetFalse returns true", c("r1.5"), {
-    expect_true(RetFalse())
+test("ret_false returns true", c("r1.5"), {
+    expect_true(ret_false())
 })
 
-test("RetTrue works but there are no points.", NULL, {
-  expect_true(RetTrue())
+res_f("ret_true works but there are no points.", NULL, {
+  expect_true(ret_true())
 })

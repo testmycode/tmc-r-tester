@@ -3,20 +3,20 @@
   for(test in testthat_file_output) {
     name <- test$test
     message <- ""
-    if (.CheckIfTestPassed(test)) {
+    if (.check_if_test_passed(test)) {
       status <- "pass"
     } else {
       status <- "fail"
-      message <- .CreateMessageForTestWithFailures(test)
+      message <- .create_message_for_test_with_failures(test)
     }
-    points <- .GetPointsForTest(name, tests_points, file_points)
+    points <- .get_points_for_test(name, tests_points, file_points)
     test_result <- list("name" = name, "status" = status, "points" = points, "message" = message, backtrace = list())
     results[[length(results) + 1 ]] <- test_result
   }
   return(results)
 }
 
-.GetPointsForTest <- function(test_name, tests_points, file_points) {
+.get_points_for_test <- function(test_name, tests_points, file_points) {
   if (is.null(tests_points[[test_name]])) {
     test_points <- vector()
   } else {
@@ -26,11 +26,11 @@
   return(test_points)
 }
 
-#Checks if all tests pass in testOutput
-.CheckAllTestPassed <- function(testOutput) {
+#Checks if all tests pass in test_output
+.check_all_test_passed <- function(test_output) {
   ret <- TRUE
-  for (test in testOutput) {
-    if (!.CheckIfTestPassed(test)) {
+  for (test in test_output) {
+    if (!.check_if_test_passed(test)) {
       ret <- FALSE
       break
     }
@@ -39,10 +39,10 @@
 }
 
 #Checks if a single test passed
-.CheckIfTestPassed <- function(test) {
+.check_if_test_passed <- function(test) {
   ret <- TRUE
   for (result in test$results) {
-    if (!.CheckIfResultPassed(result)) {
+    if (!.check_if_result_passed(result)) {
       ret <- FALSE
       break
     }
@@ -51,27 +51,27 @@
 }
 
 #Check if a single result passed
-.CheckIfResultPassed <- function(result) {
+.check_if_result_passed <- function(result) {
   return(format(result) == "As expected")
 }
 
 #Returns message from failed results
 #Currently supports only results that used calls
-.MessageFromFailedResult <- function(result) {
+.message_from_failed_Result <- function(result) {
   if (is.null(result$call)) {
     return("")
   }
   #language that failed the test. for example call expect_equal(1,2)
-  language <- toString(result$call[[1]])
+  language <- to_string(result$call[[1]])
   return (paste(sep="", "Failed with call: ", language,"\n", result$message))
 }
 
-.CreateMessageForTestWithFailures <- function(test) {
-  testMessage <- ""
+.create_message_for_test_with_failures <- function(test) {
+  test_message <- ""
   for (result in test$results) {
     if (format(result) != "As expected") {
-      testMessage <- paste(sep = "", testMessage, .MessageFromFailedResult(result))
+      test_message <- paste(sep = "", test_message, .message_from_failed_Result(result))
     }
   }
-  return(testMessage)
+  return(test_message)
 }

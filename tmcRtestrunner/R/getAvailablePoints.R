@@ -1,13 +1,13 @@
 library("testthat")
 ###tempOverride
-test <- function(a,point,c){
-  if(!is.null(point)){
+test <- function(a, point, c){
+  if (!is.null(point)){
     all_available_points<<-c(all_available_points,point)
   }
 }
 ###tempOverride
 points_for_all_tests<-function(point){
-  all_available_points<<-c(all_available_points,point)
+  all_available_points <<- c(all_available_points, point)
 }
 
 get_available_points <-function(project_path){

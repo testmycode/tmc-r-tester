@@ -12,6 +12,9 @@ LazyData: true
 Depends:
   testthat,
   jsonlite
+Imports:
+  testthat,
+  jsonlite
 Suggests:
   lintr
 Collate:

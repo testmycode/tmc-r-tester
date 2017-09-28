@@ -35,7 +35,7 @@ test_that(".run_tests_project adds points accordingly for simple_all_tests_pass"
 
 test_that("RunTests works as intended", {
   run_tests(simple_all_tests_pass_project_path)
-  expect_true(file.exists(paste(sep="",simple_all_tests_pass_project_path, "/.results.json")))
+  expect_true(file.exists(paste(sep = "", simple_all_tests_pass_project_path, "/.results.json")))
 })
 
 test_that("Not all tests pass in simple_some_tests_fail.", {
@@ -55,14 +55,14 @@ test_that("Not all tests pass in simple_some_tests_fail.", {
 
 test_that("RunTests works even when some of the tests are failing", {
   run_tests(simple_some_tests_fail_project_path)
-  expect_true(file.exists(paste(sep="", simple_some_tests_fail_project_path, "/.results.json")))
+  expect_true(file.exists(paste(sep = "", simple_some_tests_fail_project_path, "/.results.json")))
 })
 
 test_that("RunTests works with printing", {
   cat(format("\n\nTHIS TEST INCLUDES PRINTING\n\n"))
   run_tests(simple_some_tests_fail_project_path, TRUE)
   cat("\n\nEND OF PRINTING TEST\n\n")
-  expect_true(file.exists(paste(sep="", simple_some_tests_fail_project_path, "/.results.json")))
+  expect_true(file.exists(paste(sep = "", simple_some_tests_fail_project_path, "/.results.json")))
 })
 
 

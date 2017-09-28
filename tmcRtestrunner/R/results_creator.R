@@ -1,6 +1,9 @@
-.create_file_results <- function(testthat_file_output, tests_points, file_points) {
+.create_file_results <- function(testthat_file_output,
+                                 tests_points,
+                                 file_points) {
+
   results <- list()
-  for(test in testthat_file_output) {
+  for (test in testthat_file_output) {
     name <- test$test
     message <- ""
     if (.check_if_test_passed(test)) {
@@ -9,9 +12,17 @@
       status <- "fail"
       message <- .create_message_for_test_with_failures(test)
     }
-    points <- .get_points_for_test(name, tests_points, file_points)
-    test_result <- list("name" = name, "status" = status, "points" = points, "message" = message, backtrace = list())
-    results[[length(results) + 1 ]] <- test_result
+    points <- .get_points_for_test(name,
+                                   tests_points,
+                                   file_points)
+
+    test_result <- list("name" = name,
+                        "status" = status,
+                        "points" = points,
+                        "message" = message,
+                        backtrace = list())
+
+    results[[length(results) + 1]] <- test_result
   }
   return(results)
 }
@@ -62,15 +73,16 @@
     return("")
   }
   #language that failed the test. for example call expect_equal(1,2)
-  language <- to_string(result$call[[1]])
-  return (paste(sep="", "Failed with call: ", language,"\n", result$message))
+  language <- toString(result$call[[1]])
+  return (paste(sep = "", "Failed with call: ", language, "\n", result$message))
 }
 
 .create_message_for_test_with_failures <- function(test) {
   test_message <- ""
   for (result in test$results) {
     if (format(result) != "As expected") {
-      test_message <- paste(sep = "", test_message, .message_from_failed_Result(result))
+      test_message <- paste(sep = "", test_message,
+        .message_from_failed_Result(result))
     }
   }
   return(test_message)

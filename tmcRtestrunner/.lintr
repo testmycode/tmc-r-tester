@@ -1,3 +1,2 @@
 linters: with_defaults(line_length_linter(120),
-                      object_length_linter(50),
-                      assignment_linter=NULL)
+                      object_length_linter(50))

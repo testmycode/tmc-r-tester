@@ -64,15 +64,3 @@ test_that("RunTests works with printing", {
   cat("\n\nEND OF PRINTING TEST\n\n")
   expect_true(file.exists(paste(sep = "", simple_some_tests_fail_project_path, "/.results.json")))
 })
-
-
-
-# test_that("RunTests works", {
-#   runTests(simple_all_tests_pass_project_path)
-# })
-
-# test_that("PrintResult produces the right output", {
-#   string1 <- format(.PrintResult("Testi1", "!", FALSE))
-#   string2 <- format("Testi1: PASS")
-#   expect_equal(string1, string2)
-# })

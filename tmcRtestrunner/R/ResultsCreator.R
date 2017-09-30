@@ -37,18 +37,6 @@
   return(test_points)
 }
 
-#Checks if all tests pass in test_output
-.check_all_test_passed <- function(test_output) {
-  ret <- TRUE
-  for (test in test_output) {
-    if (!.check_if_test_passed(test)) {
-      ret <- FALSE
-      break
-    }
-  }
-  return (ret)
-}
-
 #Checks if a single test passed
 .check_if_test_passed <- function(test) {
   ret <- TRUE

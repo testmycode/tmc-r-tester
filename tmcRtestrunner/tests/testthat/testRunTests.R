@@ -58,9 +58,11 @@ test_that("RunTests works even when some of the tests are failing", {
   expect_true(file.exists(paste(sep = "", simple_some_tests_fail_project_path, "/.results.json")))
 })
 
-test_that("RunTests works with printing", {
-  cat(format("\n\nTHIS TEST INCLUDES PRINTING\n\n"))
-  run_tests(simple_some_tests_fail_project_path, TRUE)
-  cat("\n\nEND OF PRINTING TEST\n\n")
-  expect_true(file.exists(paste(sep = "", simple_some_tests_fail_project_path, "/.results.json")))
+test_that("RunTests does print on print = TRUE", {
+  #simple_all_tests_pass prints as expected
+  expect_output(run_tests(simple_all_tests_pass_project_path, print = TRUE), "ret_true works.: pass\nret_one works.: pass\nadd works.: pass")
+})
+
+test_that("RunTests doesn't print on print = FALSE", {
+  expect_silent(run_tests(simple_all_tests_pass_project_path, print = FALSE))
 })

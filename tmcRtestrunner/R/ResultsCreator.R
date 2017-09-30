@@ -51,7 +51,7 @@
       break
     }
   }
-  return (ret)
+  return(ret)
 }
 
 #Check if a single result passed
@@ -61,13 +61,13 @@
 
 #Returns message from failed results
 #Currently supports only results that used calls
-.message_from_failed_Result <- function(result) {
+.message_from_failed_result <- function(result) {
   if (is.null(result$call)) {
     return("")
   }
   #language that failed the test. for example call expect_equal(1,2)
   language <- toString(result$call[[1]])
-  return (paste(sep = "", "Failed with call: ", language, "\n", result$message))
+  return(paste(sep = "", "Failed with call: ", language, "\n", result$message))
 }
 
 .create_message_for_test <- function(test) {
@@ -75,7 +75,7 @@
   for (result in test$results) {
     if (format(result) != "As expected") {
       test_message <- paste(sep = "", test_message,
-        .message_from_failed_Result(result))
+        .message_from_failed_result(result))
     }
   }
   return(test_message)

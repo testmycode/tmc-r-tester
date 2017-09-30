@@ -6,3 +6,8 @@
 ### Documentation
 
 * [Product backlog, sprint backlogs and worked hours](https://docs.google.com/spreadsheets/d/1uS8EfZtXFUFsn7fuUvls3LqDM_Vpn82c1zXXGLNh6ws/)
+
+
+### Code style
+
+We aim to follow the standard R styling, as described in [Hadley Wickham style guide](http://r-pkgs.had.co.nz/style.html)

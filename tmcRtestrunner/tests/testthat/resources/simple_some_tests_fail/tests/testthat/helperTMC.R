@@ -1,7 +1,7 @@
 
 #Sets the points for all tests to global environment, wherefrom they can
 #be retrieved.
-pointsForAllTests <- function(points) {
+points_for_all_tests <- function(points) {
   .GlobalEnv$points_for_all_tests <- points
 }
 

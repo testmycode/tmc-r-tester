@@ -5,64 +5,48 @@
 #  project_path: The absolute path to the root of the project being tested.
 #  print: If TRUE, prints results; if not, not. DEFAULT is FALSE.
 #
-runTests <- function(projectPath, print=FALSE) {
-  tmcrTestRunnerProjectPath <- getwd()
+run_tests <- function(project_path, print=FALSE) {
+  tmc_r_rest_runner_project_path <- getwd()
 
   #runs test for project, returns testthatOuput with added points.
-  testthatOutput <- .RunTestsProject(projectPath)
+  test_results <- .run_tests_project(project_path)
 
-  jsonResults <- .CreateJsonResults(testthatOutput)
-  .WriteJson(jsonResults)
+  json_results <- .create_json_results(test_results)
+  .write_json(json_results)
 
   if (print) {
-    .PrintResultsFromJson(jsonResults)
+    .print_results_from_json(json_results)
   }
 
-  setwd(tmcrTestRunnerProjectPath)
+  setwd(tmc_r_rest_runner_project_path)
 }
 
-.RunTestsProject <- function(projectPath) {
-  setwd(projectPath)
+.run_tests_project <- function(project_path) {
+  setwd(project_path)
 
-  testthatOutput <- list()
+  test_results <- list()
 
   #Lists all the files in the path beginning with "test" and ending in ".R"
-  testFiles <- list.files(path="tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
-  for (testFile in testFiles) {
-    testFileOutput <- .RunTestsFile(testFile)
-    testthatOutput <- c(testthatOutput, testFileOutput)
+  for (test_file in test_files) {
+    file_results <- .run_tests_file(test_file)
+    test_results <- c(test_results, file_results)
   }
-  return(testthatOutput)
+  return(test_results)
 }
 
-.RunTestsFile <- function(filePath) {
+.run_tests_file <- function(file_path) {
   .GlobalEnv$points <- list()
   .GlobalEnv$points_for_all_tests <- list()
 
-  testFileOutput <- test_file(filePath, reporter = "silent")
-  testFileOutput <- .AddPointsToTestOutput(testFileOutput)
+  test_file_output <- test_file(file_path, reporter = "silent")
 
-  return(testFileOutput)
+  test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
+
+  return(test_file_results)
 }
 
-.AddPointsToTestOutput <- function(testOutput) {
-  for (i in 1 : length(testOutput)) {
-    testOutput[[i]]$points <- .GetTestPoints(testOutput[[i]]$test)
-  }
-  return(testOutput)
-}
-
-.GetTestPoints <- function(testName) {
-  if (is.null(points[[testName]])) {
-    testPoints <- vector()
-  } else {
-    testPoints <- points[[testName]]
-  }
-  testPoints <- c(.GlobalEnv$points_for_all_tests, testPoints)
-  return(testPoints)
-}
-
-runTestsWithDefault <- function(bol) {
-  runTests(getwd(), bol)
+run_tests_with_default <- function(bol) {
+  run_tests(getwd(), bol)
 }

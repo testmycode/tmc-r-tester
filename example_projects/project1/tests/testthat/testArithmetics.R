@@ -2,7 +2,7 @@ library('testthat')
 
 source("../../R/arithmetics.R")
 
-pointsForAllTests(c("r1"))
+points_for_all_tests(c("r1"))
 
 test("Addition works", c("r1.1", "r1.2"), {
   expect_equal(add(1, 2), 3)

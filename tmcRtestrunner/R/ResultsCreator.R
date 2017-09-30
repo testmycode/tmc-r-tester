@@ -5,13 +5,9 @@
   results <- list()
   for (test in testthat_file_output) {
     name <- test$test
-    message <- ""
-    if (.check_if_test_passed(test)) {
-      status <- "pass"
-    } else {
-      status <- "fail"
-      message <- .create_message_for_test_with_failures(test)
-    }
+    status <- .get_status_for_test(test)
+    message <- .create_message_for_test(test)
+    backtrace <- list()
     points <- .get_points_for_test(name,
                                    tests_points,
                                    file_points)
@@ -20,7 +16,7 @@
                         "status" = status,
                         "points" = points,
                         "message" = message,
-                        backtrace = list())
+                        "backtrace" = backtrace)
 
     results[[length(results) + 1]] <- test_result
   }
@@ -35,6 +31,15 @@
   }
   test_points <- c(file_points, test_points)
   return(test_points)
+}
+
+.get_status_for_test <- function(test) {
+  if (.check_if_test_passed(test)) {
+    status <- "pass"
+  } else {
+    status <- "fail"
+  }
+  return(status)
 }
 
 #Checks if a single test passed
@@ -65,7 +70,7 @@
   return (paste(sep = "", "Failed with call: ", language, "\n", result$message))
 }
 
-.create_message_for_test_with_failures <- function(test) {
+.create_message_for_test <- function(test) {
   test_message <- ""
   for (result in test$results) {
     if (format(result) != "As expected") {

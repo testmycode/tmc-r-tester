@@ -5,7 +5,7 @@
     test_json_result <- .create_json_test_result(test_result)
     json_results[[length(json_results) + 1]] <- test_json_result
   }
-  return (json_results)
+  return(json_results)
 }
 
 #Creates JSON for each different test case.

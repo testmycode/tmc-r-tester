@@ -40,11 +40,22 @@ run_tests <- function(project_path, print=FALSE) {
   .GlobalEnv$points <- list()
   .GlobalEnv$points_for_all_tests <- list()
 
-  test_file_output <- test_file(file_path, reporter = "silent")
+  #Runs tests on file. If any errors occur calls .handle_test_file_error function.
+  test_file_output <- tryCatch({test_file(file_path, reporter = "silent")},
+                               error = .handle_test_file_error)
 
   test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
 
   return(test_file_results)
+}
+
+#Writes backtrace to .results.json (TODO: implement actual traceback) and throws error
+.handle_test_file_error <- function(error) {
+  #writes empty backtrace to .results.json TODO: implement backtrace
+  .write_json(list(list(backtrace = list())))
+
+  #Stops execution with error message.
+  stop(error)
 }
 
 run_tests_with_default <- function(bol) {

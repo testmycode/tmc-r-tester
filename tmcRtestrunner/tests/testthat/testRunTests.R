@@ -3,6 +3,7 @@ test_resources_dir <- paste(sep = "", getwd(), "/resources")
 #projects for testing:
 simple_all_tests_pass_project_path <- paste(sep = "", test_resources_dir, "/simple_all_tests_pass")
 simple_some_tests_fail_project_path <- paste(sep = "", test_resources_dir, "/simple_some_tests_fail")
+simple_source_code_error_project_path <- paste(sep = "", test_resources_dir, "/simple_source_code_error")
 
 remove_old_results_json <- function(project_path) {
   results_json_path <- paste(sep = "", project_path, "/.results.json")
@@ -84,4 +85,21 @@ test_that("RunTests does print on print = TRUE", {
 
 test_that("RunTests doesn't print on print = FALSE", {
   expect_silent(run_tests(simple_all_tests_pass_project_path, print = FALSE))
+})
+
+test_that("run_tests handles simple_source_code_error accordingly.", {
+  remove_old_results_json(simple_source_code_error_project_path)
+
+  #expecting an error message when running source code with error:
+  expect_error(run_tests(simple_source_code_error_project_path))
+
+  results_json <- read_json(paste(sep = "", simple_source_code_error_project_path, "/.results.json"))
+
+  #results.json should have only one list and it should contain one element
+  expect_equal(length(results_json), 1)
+  expect_equal(length(results_json[[1]]), 1)
+
+  #this element should be named backtrace and it should be empty
+  expect_equal("backtrace", names(results_json[[1]]))
+  expect_equal(0, length(results_json[[1]]$backtrace))
 })

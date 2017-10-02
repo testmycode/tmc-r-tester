@@ -1,5 +1,4 @@
 library('testthat')
-source('../../R/strings.R')
 
 points_for_all_tests(c("r3"))
 

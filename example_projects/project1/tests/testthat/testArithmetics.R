@@ -1,7 +1,5 @@
 library('testthat')
 
-source("../../R/arithmetics.R")
-
 points_for_all_tests(c("r1"))
 
 test("Addition works", c("r1.1", "r1.2"), {

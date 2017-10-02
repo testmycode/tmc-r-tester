@@ -68,18 +68,25 @@ test_that(".results.json written as expected for simple_some_tests_fail", {
 
   #Expectation of what .result.json should be (includes all the expected test results):
   expected_json_result <- list()
-  expected_json_result[[1]] <- list(status = "pass", name = "ret_true works.", message = "", backtrace = list(), points = list("r1", "r1.1"))
-  expected_json_result[[2]] <- list(status = "pass", name = "ret_one works.", message = "", backtrace = list(), points = list("r1", "r1.2"))
-  expected_json_result[[3]] <- list(status = "pass", name = "add works.", message = "", backtrace = list(), points = list("r1", "r1.3", "r1.4"))
-  expected_json_result[[4]] <- list(status = "fail", name = "ret_false returns true", message = "Failed with call: expect_true, ret_false()\nret_false() isn't true.\n", backtrace = list(), points = list("r1", "r1.5"))
-  expected_json_result[[5]] <- list(status = "pass", name = "ret_true works but there are no points.", message = "", backtrace = list(), points = list("r1"))
+  expected_json_result[[1]] <- list(status = "pass", name = "ret_true works.",
+                                    message = "", backtrace = list(), points = list("r1", "r1.1"))
+  expected_json_result[[2]] <- list(status = "pass", name = "ret_one works.",
+                                    message = "", backtrace = list(), points = list("r1", "r1.2"))
+  expected_json_result[[3]] <- list(status = "pass", name = "add works.",
+                                    message = "", backtrace = list(), points = list("r1", "r1.3", "r1.4"))
+  expected_json_result[[4]] <- list(status = "fail", name = "ret_false returns true",
+                                    message = "Failed with call: expect_true, ret_false()\nret_false() isn't true.\n",
+                                    backtrace = list(), points = list("r1", "r1.5"))
+  expected_json_result[[5]] <- list(status = "pass", name = "ret_true works but there are no points.",
+                                    message = "", backtrace = list(), points = list("r1"))
 
   for (i in 1:5) expect_equal(results_json[[i]], expected_json_result[[i]])
 })
 
 test_that("RunTests does print on print = TRUE", {
   #simple_all_tests_pass prints as expected
-  expect_output(run_tests(simple_all_tests_pass_project_path, print = TRUE), "ret_true works.: pass\nret_one works.: pass\nadd works.: pass")
+  expect_output(run_tests(simple_all_tests_pass_project_path, print = TRUE),
+                "ret_true works.: pass\nret_one works.: pass\nadd works.: pass")
 })
 
 test_that("RunTests doesn't print on print = FALSE", {

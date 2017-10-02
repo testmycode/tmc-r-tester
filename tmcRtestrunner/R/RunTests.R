@@ -63,7 +63,7 @@ run_tests <- function(project_path, print=FALSE) {
   .GlobalEnv$points <- list()
   .GlobalEnv$points_for_all_tests <- list()
 
-  test_file_output <- test_file(file_path, reporter = "silent", env = .create_test_env)
+  test_file_output <- test_file(file_path, reporter = "silent", env = .create_test_env())
 
   test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
 

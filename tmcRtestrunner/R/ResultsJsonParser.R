@@ -11,11 +11,12 @@
 
 #Creates JSON based on the test file.
 .create_json_results <- function(test_results) {
-  json_results <- list()
+  json_test_results <- list()
   for (test_result in test_results) {
     test_json_result <- .create_json_test_result(test_result)
-    json_results[[length(json_results) + 1]] <- test_json_result
+    json_test_results[[length(json_test_results) + 1]] <- test_json_result
   }
+  json_results <- list(runStatus = unbox("success"), backtrace = list(), testResults = json_test_results)
   return(json_results)
 }
 
@@ -40,7 +41,7 @@
 
 #Prints results.
 .print_results_from_json <- function(json_result) {
-  for (test in json_result) {
+  for (test in json_result$testResults) {
     cat(sep = "", test$name, ": ", test$status, "\n")
     if (test$message != "") {
       cat(sep = "", "\n", test$message, "\n")

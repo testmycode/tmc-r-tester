@@ -60,6 +60,12 @@ test_that(".results.json written as expected for simple_some_tests_fail", {
   run_tests(simple_some_tests_fail_project_path)
   results_json <- read_json(paste(sep = "", simple_some_tests_fail_project_path, "/.results.json"))
 
+  #runStatus should be true and backtrace empty
+  expect_equal(results_json$runStatus, "success")
+  expect_equal(results_json$backtrace, list())
+
+  test_results_json <- results_json$testResults
+
   #Expectation of what .result.json should be (includes all the expected test results):
   expected_json_result <- list()
   expected_json_result[[1]] <- list(status = "pass", name = "ret_true works.",
@@ -74,7 +80,7 @@ test_that(".results.json written as expected for simple_some_tests_fail", {
   expected_json_result[[5]] <- list(status = "pass", name = "ret_true works but there are no points.",
                                     message = "", backtrace = list(), points = list("r1"))
 
-  for (i in 1:5) expect_equal(results_json[[i]], expected_json_result[[i]])
+  for (i in 1:5) expect_equal(test_results_json[[i]], expected_json_result[[i]])
 })
 
 test_that("RunTests does print on print = TRUE", {
@@ -95,13 +101,10 @@ test_that("run_tests handles simple_source_code_error accordingly.", {
 
   results_json <- read_json(paste(sep = "", simple_source_code_error_project_path, "/.results.json"))
 
-  #results.json should have only one list and it should contain one element
-  expect_equal(length(results_json), 1)
-  expect_equal(length(results_json[[1]]), 1)
-
-  #this element should be named backtrace and it should be empty
-  expect_equal("backtrace", names(results_json[[1]]))
-  expect_equal(0, length(results_json[[1]]$backtrace))
+  #runStatus whould be "sourcing_failed", backtrace empty and testResults empty
+  expect_equal(results_json$runStatus, "sourcing_failed")
+  expect_equal(results_json$backtrace, list())
+  expect_equal(results_json$testResults, list())
 })
 
 test_that("run_available_points works and runs available_points", {

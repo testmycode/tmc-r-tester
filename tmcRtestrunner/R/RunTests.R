@@ -75,7 +75,7 @@ run_tests <- function(project_path, print=FALSE) {
 #Writes backtrace to .results.json (TODO: implement actual traceback) and throws error
 .handle_sourcing_error <- function(error) {
   #writes empty backtrace to .results.json TODO: implement backtrace
-  .write_json(list(list(backtrace = list())), ".results.json")
+  .write_json(list(runStatus = unbox("sourcing_failed"), backtrace = list(), testResults = list()), ".results.json")
 
   #Stops execution with error message.
   stop(error)

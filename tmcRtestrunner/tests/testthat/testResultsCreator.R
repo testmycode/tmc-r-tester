@@ -5,23 +5,6 @@ simple_all_tests_fail_project_path <- paste(sep = "", test_resources_dir, "/simp
 simple_all_tests_pass_project_path <- paste(sep = "", test_resources_dir, "/simple_all_tests_pass")
 simple_some_tests_fail_project_path <- paste(sep = "", test_resources_dir, "/simple_some_tests_fail")
 
-.for_testing_run_tests_project <- function(project_path) {
-  .GlobalEnv$points <- list()
-  .GlobalEnv$points_for_all_tests <- list()
-  setwd(project_path)
-
-  test_results <- list()
-
-  #Lists all the files in the path beginning with "test" and ending in ".R"
-  test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
-
-  for (test_file in test_files) {
-    test_results <- c(test_results, test_file(test_file, reporter = "silent"))
-  }
-  return(test_results)
-}
-
-
 test_that("Test is reported to pass correctly", {
   test_output <- .for_testing_run_tests_project(simple_all_tests_pass_project_path)
   #All tests should return true:

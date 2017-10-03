@@ -4,13 +4,6 @@ test_resources_dir <- paste(sep = "", getwd(), "/resources")
 simple_all_tests_pass_project_path <- paste(sep = "", test_resources_dir, "/simple_all_tests_pass")
 simple_some_tests_fail_project_path <- paste(sep = "", test_resources_dir, "/simple_some_tests_fail")
 
-remove_old_results_json <- function(project_path) {
-  results_json_path <- paste(sep = "", project_path, "/.results.json")
-  if (file.exists(results_json_path)) {
-    file.remove(results_json_path)
-  }
-}
-
 test_that("Test pass in simple_all_tests_pass", {
   test_results <- .run_tests_project(simple_all_tests_pass_project_path)
 

@@ -24,7 +24,7 @@ library("testthat")
   all_available_points <- list()
   for (i in (1:unlist(.GlobalEnv$counter - 1))) {
     for (desc in map_to_desc[[i]]) {
-      all_available_points[[desc]] <- c(test_available_points[[desc]], file_points[[i]])
+      all_available_points[[desc]] <- c(file_points[[i]], test_available_points[[desc]])
     }
   }
   return (all_available_points)

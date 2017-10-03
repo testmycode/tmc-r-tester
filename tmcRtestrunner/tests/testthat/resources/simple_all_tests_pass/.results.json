@@ -35,6 +35,18 @@
             "r1.3",
             "r1.4"
         ]
+    },
+    {
+        "status": "pass",
+        "name": "minus works",
+        "message": "",
+        "backtrace": [
+
+        ],
+        "points": [
+            "r2",
+            "r2.1"
+        ]
     }
 ]
 

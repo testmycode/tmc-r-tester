@@ -23,24 +23,47 @@ run_tests <- function(project_path, print=FALSE) {
 
 .run_tests_project <- function(project_path) {
   setwd(project_path)
-
   test_results <- list()
-
   #Lists all the files in the path beginning with "test" and ending in ".R"
   test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
   for (test_file in test_files) {
-    file_results <- .run_tests_file(test_file)
+    file_results <- .run_tests_file(test_file, test_env)
     test_results <- c(test_results, file_results)
   }
   return(test_results)
 }
 
-.run_tests_file <- function(file_path) {
+.create_test_env <- function() {
+  test_env <- new.env()
+  .define_tester_functions(test_env)
+  .source_files(test_env)
+  return (test_env)
+}
+
+.define_tester_functions <- function(test_env) {
+  test_env$points_for_all_tests <- function(points) {
+    .GlobalEnv$points_for_all_tests <- points
+  }
+
+  #The test that wraps around test_that()-method and stores the points
+  #to global environment.
+  test_env$test <- function(desc, points, code) {
+    .GlobalEnv$points[[desc]] <- points
+    test_that(desc, code)
+  }
+}
+
+.source_files <- function(test_env) {
+  environment(.source_files) <- test_env
+  sapply(list.files(pattern = "[.]R$", path = "R/", full.names = TRUE), source);
+}
+
+.run_tests_file <- function(file_path, env1) {
   .GlobalEnv$points <- list()
   .GlobalEnv$points_for_all_tests <- list()
 
-  test_file_output <- test_file(file_path, reporter = "silent")
+  test_file_output <- test_file(file_path, reporter = "silent", env = .create_test_env())
 
   test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
 

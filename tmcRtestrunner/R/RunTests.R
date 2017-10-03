@@ -1,6 +1,6 @@
 # Runs the tests from project directory and writes results JSON to the root of the project
 # as .tmc_results.json.
-#
+#r
 # Args:
 #  project_path: The absolute path to the root of the project being tested.
 #  print: If TRUE, prints results; if not, not. DEFAULT is FALSE.
@@ -12,7 +12,7 @@ run_tests <- function(project_path, print=FALSE) {
   test_results <- .run_tests_project(project_path)
 
   json_results <- .create_json_results(test_results)
-  .write_json(json_results)
+  .write_json(json_results, ".results.json")
 
   if (print) {
     .print_results_from_json(json_results)
@@ -72,4 +72,17 @@ run_tests <- function(project_path, print=FALSE) {
 
 run_tests_with_default <- function(bol) {
   run_tests(getwd(), bol)
+}
+
+# Checks the available points for all test in the project without running test. Creates
+# file .available_points.json in the project root.
+run_available_points <- function(project_path) {
+  tmc_r_rest_runner_project_path <- getwd()
+
+  available_points <- .get_available_points(project_path)
+
+  json_results <- .create_available_points_json_results(available_points)
+  .write_json(json_results, ".available_points.json")
+
+  setwd(tmc_r_rest_runner_project_path)
 }

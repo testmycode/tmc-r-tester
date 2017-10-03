@@ -37,15 +37,26 @@
         ]
     },
     {
+        "status": "fail",
+        "name": "ret_false returns true",
+        "message": "Failed with call: expect_true, ret_false()\nret_false() isn't true.\n",
+        "backtrace": [
+
+        ],
+        "points": [
+            "r1",
+            "r1.5"
+        ]
+    },
+    {
         "status": "pass",
-        "name": "minus works",
+        "name": "ret_true works but there are no points.",
         "message": "",
         "backtrace": [
 
         ],
         "points": [
-            "r2",
-            "r2.1"
+            "r1"
         ]
     }
 ]

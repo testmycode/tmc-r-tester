@@ -85,3 +85,10 @@ test_that("RunTests does print on print = TRUE", {
 test_that("RunTests doesn't print on print = FALSE", {
   expect_silent(run_tests(simple_all_tests_pass_project_path, print = FALSE))
 })
+
+test_that("run_available_points works and runs available_points", {
+  run_available_points(simple_all_tests_pass_project_path)
+  available_points_path <- paste(sep="", simple_all_tests_pass_project_path, "/.available_points.json")
+  expect_equal(T, file.exists(available_points_path))
+  file.remove(available_points_path)
+})

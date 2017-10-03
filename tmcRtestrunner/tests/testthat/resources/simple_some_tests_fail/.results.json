@@ -1,7 +1,7 @@
 [
     {
         "status": "pass",
-        "name": "RetTrue works.",
+        "name": "ret_true works.",
         "message": "",
         "backtrace": [
 
@@ -13,7 +13,7 @@
     },
     {
         "status": "pass",
-        "name": "RetOne works.",
+        "name": "ret_one works.",
         "message": "",
         "backtrace": [
 
@@ -25,7 +25,7 @@
     },
     {
         "status": "pass",
-        "name": "Add works.",
+        "name": "add works.",
         "message": "",
         "backtrace": [
 
@@ -38,8 +38,8 @@
     },
     {
         "status": "fail",
-        "name": "RetFalse returns true",
-        "message": "Failed with call: expect_true, RetFalse()\nRetFalse() isn't true.\n",
+        "name": "ret_false returns true",
+        "message": "Failed with call: expect_true, ret_false()\nret_false() isn't true.\n",
         "backtrace": [
 
         ],
@@ -50,7 +50,7 @@
     },
     {
         "status": "pass",
-        "name": "RetTrue works but there are no points.",
+        "name": "ret_true works but there are no points.",
         "message": "",
         "backtrace": [
 

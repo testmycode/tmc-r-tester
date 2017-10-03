@@ -5,7 +5,7 @@ source("../../R/main.R")
 points_for_all_tests(c("r1"))
 
 test("ret_true works", c("r1.1"), {
-  expect_true(ret_false)
+  expect_true(ret_false())
 })
 
 test("ret_one works", c("r1.2"), {

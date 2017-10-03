@@ -9,7 +9,7 @@
       results[[length(results)+1]] <- list(name=unbox(name), points=points)
     }
   }
-  
+
   return (results)
 }
 

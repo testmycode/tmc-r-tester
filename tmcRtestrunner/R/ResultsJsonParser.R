@@ -9,13 +9,7 @@
       results[[length(results)+1]] <- list(name=unbox(name), points=points)
     }
   }
-  # for (test_result in testthatOutput) {
-  #   print(test_result)
-    # testName <- test_result$test
-    # testPoints <- test_result$points
-
-    # results[[length(results)+1]] <- list(name=unbox(testName), points=unbox(testPoints))
-  # }
+  
   return (results)
 }
 

@@ -1,12 +1,10 @@
 #Creates JSON containing test names and points availble from them, based on the test file.
 .create_available_points_json_results <- function(available_points) {
   results <- list()
-  # names <- names(testthatOutput)
-  # points_for_all <- testthatOutput$"all"
   for (desc in names(available_points)) {
     points <- list()
     points <- available_points[[desc]]
-    results[[length(results)+1]] <- list(name = unbox(desc), points = points)
+    results[[length(results) + 1]] <- list(name = unbox(desc), points = points)
   }
   return (results)
 }

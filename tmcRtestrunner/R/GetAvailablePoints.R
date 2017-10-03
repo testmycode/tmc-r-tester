@@ -1,21 +1,26 @@
 library("testthat")
-###tempOverride
-test <- function(a, point, c){
-  if (!is.null(point)){
-    all_available_points <<- c(all_available_points, point)
+### Override helper function
+test <- function(desc, point, code){
+  if (!is.null(point)) {
+    .GlobalEnv$all_available_points[[desc]] <- c(point)
   }
 }
-###tempOverride
-points_for_all_tests <- function(point){
-  all_available_points <<- c(all_available_points, point)
+
+### Override helper function
+points_for_all_tests <- function(points) {
+  .GlobalEnv$all_available_points[["all"]] <- c(points)
 }
 
-get_available_points <- function(project_path){
+.get_available_points <- function(project_path){
+  original_path <- getwd()
   setwd(project_path)
-  all_available_points <<- c()
+
+  .GlobalEnv$all_available_points <- list()
+
   test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
   for (test_file in test_files) {
     test_file(test_file, reporter = "silent", load_helpers = FALSE)
   }
-  return(all_available_points)
+
+  return(.GlobalEnv$all_available_points)
 }

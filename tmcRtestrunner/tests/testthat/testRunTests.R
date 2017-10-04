@@ -110,8 +110,10 @@ test_that("/.available_points.json has correct values", {
   ##Get the path to the supposed file.
   available_points_path <- paste(sep="", simple_all_tests_pass_project_path, "/.available_points.json")
 
-  #Check that the file exists
+  #Create json-object from .available_points.json.
   json <- read_json(available_points_path)
+
+  #Test that json has correct values.
   expect_equal(json[[1]]$name, "ret_true works.")
   expect_equal(json[[1]]$points[[1]][1], "r1.1")
 

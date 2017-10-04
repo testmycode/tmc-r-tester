@@ -81,10 +81,6 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   stop(error)
 }
 
-run_tests_with_default <- function(bol) {
-  run_tests(getwd(), bol)
-}
-
 # Checks the available points for all test in the project without running test. Creates
 # file .available_points.json in the project root.
 run_available_points <- function(project_path) {

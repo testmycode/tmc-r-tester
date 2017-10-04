@@ -1,5 +1,4 @@
 library('testthat')
-source('../../R/week1.R')
 
 points_for_all_tests(c("r4"))
 

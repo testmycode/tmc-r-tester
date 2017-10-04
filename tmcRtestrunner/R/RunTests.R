@@ -19,6 +19,8 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   }
 
   setwd(tmc_r_rest_runner_project_path)
+
+  invisible(test_results)
 }
 
 .run_tests_project <- function(project_path) {

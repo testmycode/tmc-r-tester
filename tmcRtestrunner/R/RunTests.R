@@ -37,7 +37,9 @@ run_tests <- function(project_path, print=FALSE) {
 .create_test_env <- function() {
   test_env <- new.env()
   .define_tester_functions(test_env)
-  .source_files(test_env)
+
+  tryCatch({.source_files(test_env)},
+           error = .handle_sourcing_error)
   return (test_env)
 }
 
@@ -68,6 +70,15 @@ run_tests <- function(project_path, print=FALSE) {
   test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
 
   return(test_file_results)
+}
+
+#Writes backtrace to .results.json (TODO: implement actual traceback) and throws error
+.handle_sourcing_error <- function(error) {
+  #writes empty backtrace to .results.json TODO: implement backtrace
+  .write_json(list(runStatus = unbox("sourcing_failed"), backtrace = list(), testResults = list()), ".results.json")
+
+  #Stops execution with error message.
+  stop(error)
 }
 
 run_tests_with_default <- function(bol) {

@@ -3,6 +3,7 @@ test_resources_dir <- paste(sep = "", getwd(), "/resources")
 #projects for testing:
 simple_all_tests_pass_project_path <- paste(sep = "", test_resources_dir, "/simple_all_tests_pass")
 simple_some_tests_fail_project_path <- paste(sep = "", test_resources_dir, "/simple_some_tests_fail")
+simple_source_code_error_project_path <- paste(sep = "", test_resources_dir, "/simple_source_code_error")
 
 test_that("Test pass in simple_all_tests_pass", {
   test_results <- .run_tests_project(simple_all_tests_pass_project_path)
@@ -59,6 +60,12 @@ test_that(".results.json written as expected for simple_some_tests_fail", {
   run_tests(simple_some_tests_fail_project_path)
   results_json <- read_json(paste(sep = "", simple_some_tests_fail_project_path, "/.results.json"))
 
+  #runStatus should be true and backtrace empty
+  expect_equal(results_json$runStatus, "success")
+  expect_equal(results_json$backtrace, list())
+
+  test_results_json <- results_json$testResults
+
   #Expectation of what .result.json should be (includes all the expected test results):
   expected_json_result <- list()
   expected_json_result[[1]] <- list(status = "pass", name = "ret_true works.",
@@ -73,7 +80,7 @@ test_that(".results.json written as expected for simple_some_tests_fail", {
   expected_json_result[[5]] <- list(status = "pass", name = "ret_true works but there are no points.",
                                     message = "", backtrace = list(), points = list("r1"))
 
-  for (i in 1:5) expect_equal(results_json[[i]], expected_json_result[[i]])
+  for (i in 1:5) expect_equal(test_results_json[[i]], expected_json_result[[i]])
 })
 
 test_that("RunTests does print on print = TRUE", {
@@ -84,6 +91,20 @@ test_that("RunTests does print on print = TRUE", {
 
 test_that("RunTests doesn't print on print = FALSE", {
   expect_silent(run_tests(simple_all_tests_pass_project_path, print = FALSE))
+})
+
+test_that("run_tests handles simple_source_code_error accordingly.", {
+  remove_old_results_json(simple_source_code_error_project_path)
+
+  #expecting an error message when running source code with error:
+  expect_error(run_tests(simple_source_code_error_project_path))
+
+  results_json <- read_json(paste(sep = "", simple_source_code_error_project_path, "/.results.json"))
+
+  #runStatus whould be "sourcing_failed", backtrace empty and testResults empty
+  expect_equal(results_json$runStatus, "sourcing_failed")
+  expect_equal(results_json$backtrace, list())
+  expect_equal(results_json$testResults, list())
 })
 
 test_that("run_available_points works and runs available_points", {

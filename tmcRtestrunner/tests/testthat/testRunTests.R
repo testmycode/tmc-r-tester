@@ -86,6 +86,7 @@ test_that("RunTests doesn't print on print = FALSE", {
   expect_silent(run_tests(simple_all_tests_pass_project_path, print = FALSE))
 })
 
+
 test_that("run_available_points works and runs available_points", {
 
   ##Call run_available_points
@@ -96,6 +97,23 @@ test_that("run_available_points works and runs available_points", {
 
   #Check that the file exists
   expect_equal(T, file.exists(available_points_path))
+
+  #Delete the file afterwards.
+  file.remove(available_points_path)
+})
+
+test_that("/.available_points.json has correct values", {
+
+  ##Call run_available_points
+  run_available_points(simple_all_tests_pass_project_path)
+
+  ##Get the path to the supposed file.
+  available_points_path <- paste(sep="", simple_all_tests_pass_project_path, "/.available_points.json")
+
+  #Check that the file exists
+  json <- read_json(available_points_path)
+  expect_equal(json[[1]]$name, "ret_true works.")
+  expect_equal(json[[1]]$points[[1]][1], "r1.1")
 
   #Delete the file afterwards.
   file.remove(available_points_path)

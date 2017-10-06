@@ -30,6 +30,7 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
   for (test_file in test_files) {
+    #.source_from_test_file(test_file, new.env())
     file_results <- .run_tests_file(test_file, test_env)
     test_results <- c(test_results, file_results)
   }
@@ -41,6 +42,14 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   .define_tester_functions(test_env)
 
   tryCatch({.source_files(test_env)},
+           error = .handle_sourcing_error)
+  return (test_env)
+}
+
+.create_test_env_file <- function(test_file) {
+  test_env <- new.env()
+  .define_tester_functions(test_env)
+  tryCatch({.source_from_test_file(test_file, test_env)},
            error = .handle_sourcing_error)
   return (test_env)
 }
@@ -61,6 +70,18 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
 .source_files <- function(test_env) {
   environment(.source_files) <- test_env
   sapply(list.files(pattern = "[.]R$", path = "R/", full.names = TRUE), source);
+}
+
+.source_from_test_file <- function(test_location, test_env) {
+  environment(.source_from_test_file) <- test_env
+  script_name <- basename(test_location)
+  script_name <- substr(script_name, 5, nchar(script_name))
+  source_folder <- "R/"
+  # Checks whether list is empty and if it is, modifies the first letter of the script to lower case.
+  if (length(list.files(path = source_folder, pattern = script_name, full.names = T, recursive = FALSE))) {
+    substr(script_name, 1, 1) <- tolower(substr(script_name, 1, 1))
+  }
+  source(paste0(source_folder, script_name))
 }
 
 .run_tests_file <- function(file_path, env1) {
@@ -85,7 +106,7 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
 
 # Checks the available points for all test in the project without running test. Creates
 # file .available_points.json in the project root.
-run_available_points <- function(project_path) {
+run_available_points <- function(project_path = getwd()) {
   tmc_r_rest_runner_project_path <- getwd()
 
   available_points <- .get_available_points(project_path)

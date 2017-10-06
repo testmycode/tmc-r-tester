@@ -149,3 +149,18 @@ test_that("/.available_points.json has correct values", {
   #Delete the file afterwards.
   file.remove(available_points_path)
 })
+
+test_that("Sourcing works from single file in all tests pass", {
+  orig <- getwd()
+  files <- list.files(path = paste0(simple_all_tests_pass_project_path, "/tests/testthat"), pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  setwd(simple_all_tests_pass_project_path)
+  test_env <- new.env()
+  file <- files[[1]]
+  .source_from_test_file(file, test_env)
+  #test_env <- .create_test_env_file(file)
+  expect_true(exists("ret_true", envir = test_env, mode = "function"))
+  expect_true(exists("ret_one", envir = test_env, mode = "function"))
+  expect_true(exists("add", envir = test_env, mode = "function"))
+  expect_true(exists("minus", envir = test_env, mode = "function"))
+  setwd(orig)
+})

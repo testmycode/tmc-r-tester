@@ -115,37 +115,3 @@ test_that("run_tests handles simple_source_code_error accordingly.", {
   expect_equal(results_json$backtrace, list())
   expect_equal(results_json$testResults, list())
 })
-
-test_that("run_available_points works and runs available_points", {
-
-  ##Call run_available_points
-  run_available_points(simple_all_tests_pass_project_path)
-
-  ##Get the path to the supposed file.
-  available_points_path <- paste(sep = "", simple_all_tests_pass_project_path, "/.available_points.json")
-
-  #Check that the file exists
-  expect_equal(T, file.exists(available_points_path))
-
-  #Delete the file afterwards.
-  file.remove(available_points_path)
-})
-
-test_that("/.available_points.json has correct values", {
-
-  ##Call run_available_points
-  run_available_points(simple_all_tests_pass_project_path)
-
-  ##Get the path to the supposed file.
-  available_points_path <- paste(sep="", simple_all_tests_pass_project_path, "/.available_points.json")
-
-  #Create json-object from .available_points.json.
-  json <- read_json(available_points_path)
-
-  #Test that json has correct values.
-  expect_equal(json[[1]]$name, "ret_true works.")
-  expect_true(length(json[[1]]$points) > 0)
-
-  #Delete the file afterwards.
-  file.remove(available_points_path)
-})

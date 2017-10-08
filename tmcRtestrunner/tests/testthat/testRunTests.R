@@ -118,7 +118,7 @@ test_that("run_tests handles simple_source_code_error accordingly.", {
 
 test_that("Sourcing works from main.R file in all tests pass", {
   orig <- getwd()
-  files <- list.files(path = paste0(simple_all_tests_pass_project_path,"/tests/testthat"),
+  files <- list.files(path = paste0(simple_all_tests_pass_project_path, "/tests/testthat"),
                       pattern = "test.*\\.R", full.names = T, recursive = FALSE)
   setwd(simple_all_tests_pass_project_path)
   file <- files[[1]]

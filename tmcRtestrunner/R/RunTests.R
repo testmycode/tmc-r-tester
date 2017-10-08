@@ -77,7 +77,7 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   script_name <- substr(script_name, 5, nchar(script_name))
   source_folder <- "R/"
   # Checks whether list is empty and if it is, modifies the first letter of the script to lower case.
-  if (length(list.files(path = source_folder, pattern = script_name, full.names = T, recursive = FALSE))) {
+  if (length(list.files(path = source_folder, pattern = script_name, full.names = T, recursive = FALSE)) == 0) {
     substr(script_name, 1, 1) <- tolower(substr(script_name, 1, 1))
   }
   sys.source(paste0(source_folder, script_name), test_env)

@@ -156,11 +156,10 @@ test_that("Sourcing works from main.R file in all tests pass", {
   setwd(simple_all_tests_pass_project_path)
   file <- files[[1]]
   alt_env <- .create_test_env_file(file)
-  print(names(alt_env))
   expect_true(exists("ret_true", where = alt_env, mode = "function"))
   expect_true(exists("ret_one", where = alt_env, mode = "function"))
   expect_true(exists("add", where = alt_env, mode = "function"))
-  expect_true(exists("minus", where = alt_env, mode = "function"))
+  expect_true(!exists("minus", where = alt_env, mode = "function"))
   setwd(orig)
 })
 
@@ -171,5 +170,6 @@ test_that("Sourcing works from main.R file in all tests pass", {
   file <- files[[2]]
   alt_env <- .create_test_env_file(file)
   expect_true(exists("minus", envir = alt_env, mode = "function"))
+  expect_true(!exists("ret_true", envir = alt_env, mode = "function"))
   setwd(orig)
 })

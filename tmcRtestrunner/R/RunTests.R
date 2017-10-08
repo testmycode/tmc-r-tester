@@ -68,12 +68,13 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
 }
 
 .source_files <- function(test_env) {
-  environment(.source_files) <- test_env
-  sapply(list.files(pattern = "[.]R$", path = "R/", full.names = TRUE), source);
+  for (file in list.files(pattern = "[.]R$", path = "R/", full.names = TRUE)) {
+    sys.source(file, test_env)
+  }
 }
 
 .source_from_test_file <- function(test_location, test_env) {
-  environment(.source_from_test_file) <- test_env
+  # environment(.source_from_test_file) <- test_env
   script_name <- basename(test_location)
   script_name <- substr(script_name, 5, nchar(script_name))
   source_folder <- "R/"
@@ -81,7 +82,7 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   if (length(list.files(path = source_folder, pattern = script_name, full.names = T, recursive = FALSE))) {
     substr(script_name, 1, 1) <- tolower(substr(script_name, 1, 1))
   }
-  source(paste0(source_folder, script_name))
+  sys.source(paste0(source_folder, script_name), test_env)
 }
 
 .run_tests_file <- function(file_path, env1) {

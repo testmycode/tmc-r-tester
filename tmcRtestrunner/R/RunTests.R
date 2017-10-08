@@ -30,7 +30,6 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
 
   for (test_file in test_files) {
-    #.source_from_test_file(test_file, new.env())
     file_results <- .run_tests_file(test_file, test_env)
     test_results <- c(test_results, file_results)
   }
@@ -74,7 +73,6 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
 }
 
 .source_from_test_file <- function(test_location, test_env) {
-  # environment(.source_from_test_file) <- test_env
   script_name <- basename(test_location)
   script_name <- substr(script_name, 5, nchar(script_name))
   source_folder <- "R/"

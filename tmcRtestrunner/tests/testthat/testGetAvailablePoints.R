@@ -62,7 +62,7 @@ test_that("/.available_points.json has correct values", {
   run_available_points(simple_all_tests_pass_project_path)
 
   ##Get the path to the supposed file.
-  available_points_path <- paste(sep="", simple_all_tests_pass_project_path, "/.available_points.json")
+  available_points_path <- paste(sep = "", simple_all_tests_pass_project_path, "/.available_points.json")
 
   #Create json-object from .available_points.json.
   json <- read_json(available_points_path)

@@ -115,3 +115,29 @@ test_that("run_tests handles simple_source_code_error accordingly.", {
   expect_equal(results_json$backtrace, list())
   expect_equal(results_json$testResults, list())
 })
+
+test_that("Sourcing works from main.R file in all tests pass", {
+  orig <- getwd()
+  files <- list.files(path = paste0(simple_all_tests_pass_project_path, "/tests/testthat"),
+                      pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  setwd(simple_all_tests_pass_project_path)
+  file <- files[[1]]
+  alt_env <- .create_test_env_file(file)
+  expect_true(exists("ret_true", where = alt_env, mode = "function"))
+  expect_true(exists("ret_one", where = alt_env, mode = "function"))
+  expect_true(exists("add", where = alt_env, mode = "function"))
+  expect_true(!exists("minus", where = alt_env, mode = "function"))
+  setwd(orig)
+})
+
+test_that("Sourcing works from main.R file in all tests pass", {
+  orig <- getwd()
+  files <- list.files(path = paste0(simple_all_tests_pass_project_path, "/tests/testthat"),
+                      pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  setwd(simple_all_tests_pass_project_path)
+  file <- files[[2]]
+  alt_env <- .create_test_env_file(file)
+  expect_true(exists("minus", envir = alt_env, mode = "function"))
+  expect_true(!exists("ret_true", envir = alt_env, mode = "function"))
+  setwd(orig)
+})

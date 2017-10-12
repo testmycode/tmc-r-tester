@@ -2,9 +2,7 @@
 .create_available_points_json_results <- function(available_points) {
   results <- list()
   for (desc in names(available_points)) {
-    points <- list()
-    points <- available_points[[desc]]
-    results[[length(results) + 1]] <- list(name = unbox(desc), points = points)
+    results[[desc]] <- available_points[[desc]]
   }
   return (results)
 }

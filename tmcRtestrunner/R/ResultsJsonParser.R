@@ -7,15 +7,14 @@
   return (results)
 }
 
-#Creates JSON based on the test file.
-.create_json_results <- function(test_results) {
+.create_json_run_results <- function(run_results) {
   json_test_results <- list()
-  for (test_result in test_results) {
-    test_json_result <- .create_json_test_result(test_result)
-    json_test_results[[length(json_test_results) + 1]] <- test_json_result
+  for (test_result in run_results$test_results) {
+    json_test_results[[length(json_test_results) + 1]] <- .create_json_test_result(test_result)
   }
-  json_results <- list(runStatus = unbox("success"), backtrace = list(), testResults = json_test_results)
-  return(json_results)
+  json_run_results <- list("runStatus" = unbox(run_results$run_status),
+                       "backtrace" = run_results$backtrace, "testResults" = json_test_results)
+  return(json_run_results)
 }
 
 #Creates JSON for each different test case.

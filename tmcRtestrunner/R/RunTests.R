@@ -1,26 +1,30 @@
 # Runs the tests from project directory and writes results JSON to the root of the project
 # as .tmc_results.json.
-#r
+#
 # Args:
 #  project_path: The absolute path to the root of the project being tested.
 #  print: If TRUE, prints results; if not, not. DEFAULT is FALSE.
 #
+# Returns:
+#   Run results list containing: runStatus (string), backtrace (list), test_results (list)
 run_tests <- function(project_path = getwd(), print=FALSE) {
   tmc_r_test_runner_project_path <- project_path
 
-  #runs test for project, returns testthatOuput with added points.
-  test_results <- .run_tests_project(project_path)
+  #Runs tests for project and returns the results.
+  #If sourcing_error occurs, .sourcing_error_run_results returns the results.
+  run_results <- tryCatch({.run_tests_project(project_path)},
+                           sourcing_error = .sourcing_error_run_result)
 
-  json_results <- .create_json_results(test_results)
-  .write_json(json_results, ".results.json")
+  json_run_results <- .create_json_run_results(run_results)
+  .write_json(json_run_results, ".results.json")
 
   if (print) {
-    .print_results_from_json(json_results)
+    .print_results_from_json(json_run_results)
   }
 
   setwd(tmc_r_test_runner_project_path)
 
-  invisible(test_results)
+  invisible(run_results)
 }
 
 .run_tests_project <- function(project_path) {
@@ -33,7 +37,7 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
     file_results <- .run_tests_file(test_file, test_env)
     test_results <- c(test_results, file_results)
   }
-  return(test_results)
+  return(list("run_status" = "success", "backtrace" = list(), "test_results" = test_results))
 }
 
 .create_test_env <- function() {
@@ -41,7 +45,7 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   .define_tester_functions(test_env)
 
   tryCatch({.source_files(test_env)},
-           error = .handle_sourcing_error)
+           error = .signal_sourcing_error)
   return (test_env)
 }
 
@@ -49,7 +53,7 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   test_env <- new.env()
   .define_tester_functions(test_env)
   tryCatch({.source_from_test_file(test_file, test_env)},
-           error = .handle_sourcing_error)
+           error = .signal_sourcing_error)
   return (test_env)
 }
 
@@ -94,11 +98,14 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   return(test_file_results)
 }
 
-#Writes backtrace to .results.json (TODO: implement actual traceback) and throws error
-.handle_sourcing_error <- function(error) {
-  #writes empty backtrace to .results.json TODO: implement backtrace
-  .write_json(list(runStatus = unbox("sourcing_failed"), backtrace = list(), testResults = list()), ".results.json")
+# TODO: add backtrace from error to sourcing_error
+.signal_sourcing_error <- function(error) {
+  sourcing_error <- simpleError("")
+  class(sourcing_error) <- c("sourcing_error", class(sourcing_error))
+  signalCondition(sourcing_error)
+}
 
-  #Stops execution with error message.
-  stop(error)
+.sourcing_error_run_result <- function(sourcing_error) {
+  #TODO: implement backtrace and extract from sourcing_error
+  return(list("run_status" = "sourcing_failed", "backtrace" = list(), "test_results" = list()))
 }

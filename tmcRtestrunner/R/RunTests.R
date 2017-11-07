@@ -13,7 +13,8 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   #Runs tests for project and returns the results.
   #If sourcing_error occurs, .sourcing_error_run_results returns the results.
   run_results <- tryCatch({.run_tests_project(project_path)},
-                           sourcing_error = .sourcing_error_run_result)
+                          sourcing_error = .sourcing_error_run_result,
+                          run_error = .run_error_run_result)
 
   json_run_results <- .create_json_run_results(run_results)
   .write_json(json_run_results, ".results.json")
@@ -91,7 +92,9 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
   .GlobalEnv$points <- list()
   .GlobalEnv$points_for_all_tests <- list()
 
-  test_file_output <- test_file(file_path, reporter = "silent", env = .create_test_env())
+  test_env = .create_test_env()
+  test_file_output <- tryCatch({test_file(file_path, reporter = "silent", env = test_env)},
+                               error = .signal_run_error)
 
   test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
 
@@ -108,4 +111,15 @@ run_tests <- function(project_path = getwd(), print=FALSE) {
 .sourcing_error_run_result <- function(sourcing_error) {
   #TODO: implement backtrace and extract from sourcing_error
   return(list("run_status" = "sourcing_failed", "backtrace" = list(), "test_results" = list()))
+}
+
+.signal_run_error <- function(error) {
+  run_error <- simpleError("")
+  class(run_error) <- c("run_error", class(run_error))
+  signalCondition(run_error)
+}
+
+.run_error_run_result <- function(run_error) {
+  #TODO: implement backtrace and extract from run_error
+  return(list("run_status" = "run_failed", "backtrace" = list(), "test_results" = list()))
 }

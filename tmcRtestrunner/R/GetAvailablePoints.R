@@ -1,13 +1,12 @@
-library("testthat")
 
-.get_available_points <- function(project_path){
-  setwd(project_path)
+.get_available_points <- function(project_path) {
   .init_global_vars()
-  test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
+  test_files <- list.files(path = paste0(project_path, "/tests/testthat"), pattern = "test.*\\.R",
+                                         full.names = T, recursive = FALSE)
   for (test_file in test_files) {
     .GlobalEnv$map_to_desc[[.GlobalEnv$counter]] <- list()
     .GlobalEnv$file_points[[.GlobalEnv$counter]] <- list()
-    test_file(test_file, reporter = "silent", env = .create_counter_env())
+    test_file(test_file, reporter = "silent", env = .create_counter_env(project_path))
     .GlobalEnv$counter <- .GlobalEnv$counter + 1
   }
   return (.add_points(.GlobalEnv$test_available_points, .GlobalEnv$file_points, .GlobalEnv$map_to_desc))
@@ -30,14 +29,14 @@ library("testthat")
   return (all_available_points)
 }
 
-.create_counter_env <- function() {
+.create_counter_env <- function(project_path) {
   test_env <- new.env()
-  .define_counter_functions(test_env)
+  .define_counter_functions(test_env, project_path)
   return (test_env)
 }
 
-.define_counter_functions <- function(test_env) {
-  .source_files(test_env)
+.define_counter_functions <- function(test_env, project_path) {
+  .source_files(test_env, project_path)
   test_env$test <- function(desc, point, code){
     if (!(desc %in% .GlobalEnv$test_available_points)) {
       .GlobalEnv$test_available_points[[desc]] <- list()
@@ -53,12 +52,8 @@ library("testthat")
 # Checks the available points for all test in the project without running test. Creates
 # file .available_points.json in the project root.
 run_available_points <- function(project_path = getwd()) {
-  tmc_r_rest_runner_project_path <- getwd()
-
   available_points <- .get_available_points(project_path)
 
   json_results <- .create_available_points_json_results(available_points)
-  .write_json(json_results, ".available_points.json")
-
-  setwd(tmc_r_rest_runner_project_path)
+  .write_json(json_results, paste0(project_path, "/.available_points.json"))
 }

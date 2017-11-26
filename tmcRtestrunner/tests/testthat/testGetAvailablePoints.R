@@ -42,6 +42,7 @@ test_that("First test in all passing testMain returns correct points", {
 
 
 test_that("run_available_points works and runs available_points", {
+  remove_old_available_points_json(simple_all_tests_pass_project_path)
 
   ##Call run_available_points
   run_available_points(simple_all_tests_pass_project_path)
@@ -51,12 +52,10 @@ test_that("run_available_points works and runs available_points", {
 
   #Check that the file exists
   expect_equal(T, file.exists(available_points_path))
-
-  #Delete the file afterwards.
-  file.remove(available_points_path)
 })
 
 test_that("/.available_points.json has correct values", {
+  remove_old_available_points_json(simple_all_tests_pass_project_path)
 
   ##Call run_available_points
   run_available_points(simple_all_tests_pass_project_path)
@@ -70,7 +69,4 @@ test_that("/.available_points.json has correct values", {
   #Test that json has correct values.
   expect_equal(names(json)[[1]], "ret_true works.")
   expect_true(length(json[[1]]) > 0)
-
-  #Delete the file afterwards.
-  file.remove(available_points_path)
 })

@@ -28,12 +28,12 @@
 }
 
 #Writes JSON based on the whole test result.
-.write_json <- function(results, filename) {
+.write_json <- function(results, file) {
   #json utf-8 coded:
   json <- enc2utf8(toJSON(results, pretty = FALSE))
   json <- prettify(json)
   #encode json to utf-8 and write file
-  write(json, filename)
+  write(json, file)
 }
 
 #Prints results.

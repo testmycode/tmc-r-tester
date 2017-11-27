@@ -20,3 +20,10 @@ remove_old_results_json <- function(project_path) {
     file.remove(results_json_path)
   }
 }
+
+remove_old_available_points_json <- function(project_path) {
+  available_points_json_path <- paste(sep = "", project_path, "/.available_points.json")
+  if (file.exists(available_points_json_path)) {
+    file.remove(available_points_json_path)
+  }
+}

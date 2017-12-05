@@ -1,7 +1,6 @@
 .create_test_env <- function(project_path) {
   test_env <- new.env()
   .define_tester_functions(test_env)
-
   tryCatch({.source_files(test_env, project_path)},
            error = .signal_sourcing_error)
   return (test_env)
@@ -14,16 +13,17 @@
 }
 
 .define_tester_functions <- function(test_env) {
-  test_env$points_for_all_tests <- function(points) {
+  assign("points_for_all_tests",function(points) {
     .GlobalEnv$points_for_all_tests <- points
-  }
-
+  },envir=test_env)
+  lockBinding("points_for_all_tests",test_env)
   #The test that wraps around test_that()-method and stores the points
   #to global environment.
-  test_env$test <- function(desc, points, code) {
+  assign("test",function(desc, points, code) {
     .GlobalEnv$points[[desc]] <- points
     test_that(desc, code)
-  }
+  },envir=test_env)
+  lockBinding("test",test_env)
 }
 
 # .source_from_test_file <- function(test_location, test_env) {

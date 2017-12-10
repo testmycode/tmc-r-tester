@@ -1,6 +1,8 @@
 .create_test_env <- function(project_path) {
   test_env <- new.env()
   .define_tester_functions(test_env)
+  tryCatch({.override_functions(test_env, project_path)},
+           error = .signal_sourcing_error)
   tryCatch({.source_files(test_env, project_path)},
            error = .signal_sourcing_error)
   return (test_env)
@@ -27,6 +29,15 @@
     timeout = timeout);
   },envir=test_env)
   lockBinding("test",test_env)
+}
+
+
+.override_functions <- function(test_env, project_path) {
+    mock_path <- paste(sep = .Platform$file.sep, project_path, "tests",
+                        "testthat", "mock.R")
+    if (file.exists(mock_path)) {
+        sys.source(mock_path, test_env)
+    }
 }
 
 # .source_from_test_file <- function(test_location, test_env) {

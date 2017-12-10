@@ -19,9 +19,12 @@
   lockBinding("points_for_all_tests",test_env)
   #The test that wraps around test_that()-method and stores the points
   #to global environment.
-  assign("test",function(desc, points, code) {
+  assign("test",function(desc, points, code,timeout = 30) {
     .GlobalEnv$points[[desc]] <- points
-    test_that(desc, code)
+    withTimeout({
+      test_that(desc, code);
+    },
+    timeout = timeout);
   },envir=test_env)
   lockBinding("test",test_env)
 }

@@ -1,5 +1,5 @@
 # Runs the tests from project directory and writes results JSON to the root of the project
-# as .tmc_results.json.
+# as .results.json.
 #
 # Args:
 #  project_path: The absolute path to the root of the project being tested.
@@ -15,7 +15,7 @@ run_tests <- function(project_path = getwd(), print = FALSE) {
                           run_error = .run_error_run_result)
 
   json_run_results <- .create_json_run_results(run_results)
-  .write_json(json_run_results, paste0(project_path, "/.results.json"))
+  .write_json(json_run_results, file.path(project_path, ".results.json"))
 
   if (print) {
     .print_results_from_json(json_run_results)
@@ -27,8 +27,8 @@ run_tests <- function(project_path = getwd(), print = FALSE) {
 .run_tests_project <- function(project_path) {
   test_results <- list()
   #Lists all the files in the path beginning with "test" and ending in ".R"
-  test_files <- list.files(path = paste0(project_path, "/tests/testthat"), pattern = "test.*\\.R",
-                           full.names = T, recursive = FALSE)
+  test_files <- list.files(path = file.path(project_path, "tests", "testthat"), pattern = "test.*\\.R",
+                           full.names = TRUE, recursive = FALSE)
 
   for (test_file in test_files) {
     file_results <- .run_tests_file(test_file, project_path)
@@ -50,25 +50,26 @@ run_tests <- function(project_path = getwd(), print = FALSE) {
   return(test_file_results)
 }
 
-# TODO: add backtrace from error to sourcing_error
 .signal_sourcing_error <- function(error) {
-  sourcing_error <- simpleError("")
+  sourcing_error <- simpleError(message = error$message, call = error$call)
   class(sourcing_error) <- c("sourcing_error", class(sourcing_error))
   signalCondition(sourcing_error)
 }
 
 .sourcing_error_run_result <- function(sourcing_error) {
-  #TODO: implement backtrace and extract from sourcing_error
-  return(list("run_status" = "sourcing_failed", "backtrace" = list(), "test_results" = list()))
+  split_message <- strsplit(sourcing_error$message, split = "\n")
+  backtrace <- lapply(split_message[[1]], unbox)
+  return(list("run_status" = "sourcing_failed", "backtrace" = backtrace, "test_results" = list()))
 }
 
 .signal_run_error <- function(error) {
-  run_error <- simpleError("")
+  run_error <- simpleError(message = error$message, call = error$call)
   class(run_error) <- c("run_error", class(run_error))
   signalCondition(run_error)
 }
 
 .run_error_run_result <- function(run_error) {
-  #TODO: implement backtrace and extract from run_error
-  return(list("run_status" = "run_failed", "backtrace" = list(), "test_results" = list()))
+  split_message <- strsplit(run_error$message, split = "\n")
+  backtrace <- lapply(split_message[[1]], unbox)
+  return(list("run_status" = "run_failed", "backtrace" = backtrace, "test_results" = list()))
 }

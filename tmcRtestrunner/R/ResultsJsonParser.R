@@ -13,7 +13,7 @@
     json_test_results[[length(json_test_results) + 1]] <- .create_json_test_result(test_result)
   }
   json_run_results <- list("runStatus" = unbox(run_results$run_status),
-                       "backtrace" = run_results$backtrace, "testResults" = json_test_results)
+                       "backtrace" = lapply(run_results$backtrace, unbox), "testResults" = json_test_results)
   return(json_run_results)
 }
 
@@ -22,7 +22,7 @@
   test_result <- list(status = unbox(test_result$status),
                      name = unbox(format(test_result$name)),
                      message = unbox(test_result$message),
-                     backtrace = test_result$backtrace,
+                     backtrace = lapply(test_result$backtrace, unbox),
                      points = test_result$points)
   return(test_result)
 }

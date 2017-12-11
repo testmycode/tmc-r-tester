@@ -74,7 +74,7 @@ test_that("A result is created correctly with status", {
 test_that("A result is created correctly with name", {
   test_output <- .for_testing_run_tests_project(simple_all_tests_fail_project_path)
   results <- .create_file_results(test_output, points, points_for_all_tests)
-  expect_equal(results[[1]]$name, "ret_true works")
-  expect_equal(results[[2]]$name, "ret_one works")
-  expect_equal(results[[3]]$name, "add works")
+  expect_equal(results[[1]]$name, "ret_true works.")
+  expect_equal(results[[2]]$name, "ret_one works.")
+  expect_equal(results[[3]]$name, "add works.")
 })

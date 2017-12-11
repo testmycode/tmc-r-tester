@@ -77,9 +77,12 @@ test_that("run_results returns and writes.results.json as expected for simple_so
                                     message = "", backtrace = list(), points = list("r1", "r1.2"))
   expected_test_result[[3]] <- list(status = "pass", name = "add works.",
                                     message = "", backtrace = list(), points = list("r1", "r1.3", "r1.4"))
+  #expected backtrace for 4th test:
+  backtrace_test4 <- list(paste0("1: expect_true(ret_false()) in ", simple_some_tests_fail_project_path,
+                           "/tests/testthat/testMain.R#21"))
   expected_test_result[[4]] <- list(status = "fail", name = "ret_false returns true",
-                                    message = "Failed with call: expect_true, ret_false()\nret_false() isn't true.\n",
-                                    backtrace = list(), points = list("r1", "r1.5"))
+                                    message = "ret_false() isn't true.",
+                                    backtrace = backtrace_test4, points = list("r1", "r1.5"))
   expected_test_result[[5]] <- list(status = "pass", name = "ret_true works but there are no points.",
                                     message = "", backtrace = list(), points = list("r1"))
 
@@ -125,8 +128,13 @@ test_that("Sourcing fail handled accordingly.", {
 
   #runStatus whould be "sourcing_failed", backtrace empty and testResults empty
   expect_equal(results_json$runStatus, "sourcing_failed")
-  expect_equal(results_json$backtrace, list())
   expect_equal(results_json$testResults, list())
+
+  #Backtrace should contain correct error:
+  expect_true(grepl(":7:9: unexpected 'in'",results_json$backtrace[[1]]))
+  expect_equal("6: ret_one <- function() {", results_json$backtrace[[2]])
+  expect_equal("7:   error in", results_json$backtrace[[3]])
+  expect_equal("           ^", results_json$backtrace[[4]])
 })
 
 test_that("Run fail handled accordingly.", {
@@ -135,8 +143,13 @@ test_that("Run fail handled accordingly.", {
   run_tests(simple_run_fail_project_path)
   results_json <- read_json(paste(sep = "", simple_run_fail_project_path, "/.results.json"))
 
-  #runStatus whould be "run_fail", backtrace empty and testResults empty
+  #runStatus whould be "run_fail" and testResults empty
   expect_equal(results_json$runStatus, "run_failed")
-  expect_equal(results_json$backtrace, list())
   expect_equal(results_json$testResults, list())
+
+  #Backtrace should contain correct error:
+  expect_true(grepl(":9:3: unexpected 'in'",results_json$backtrace[[1]]))
+  expect_equal("8:   #Produces run fail:", results_json$backtrace[[2]])
+  expect_equal("9:   in", results_json$backtrace[[3]])
+  expect_equal("     ^", results_json$backtrace[[4]])
 })

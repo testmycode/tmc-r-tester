@@ -6,8 +6,8 @@
   for (test in testthat_file_output) {
     name <- test$test
     status <- .get_status_for_test(test)
-    message <- .create_message_for_test(test)
-    backtrace <- list()
+    message <- .create_message_for_test(test, status)
+    backtrace <- .create_backtrace_for_test(test, status)
     points <- .get_points_for_test(name,
                                    tests_points,
                                    file_points)
@@ -59,24 +59,51 @@
   return(format(result) == "As expected")
 }
 
-#Returns message from failed results
-#Currently supports only results that used calls
 .message_from_failed_result <- function(result) {
-  if (is.null(result$call)) {
-    return("")
-  }
-  #language that failed the test. for example call expect_equal(1,2)
-  language <- toString(result$call[[1]])
-  return(paste(sep = "", "Failed with call: ", language, "\n", result$message))
+  message_rows <- strsplit(result$message, "\n")[[1]]
+  return(paste(message_rows, collapse = "\n"))
 }
 
-.create_message_for_test <- function(test) {
-  test_message <- ""
+.create_message_for_test <- function(test, status) {
+  if (status == "pass") return("")
+
   for (result in test$results) {
     if (format(result) != "As expected") {
-      test_message <- paste(sep = "", test_message,
-        .message_from_failed_result(result))
+      return(.message_from_failed_result(result))
     }
   }
-  return(test_message)
+  return("")
+}
+
+.create_backtrace_for_test <- function(testthat_test_result, status) {
+  if (status == "pass") return(list())
+
+  for (result in testthat_test_result$results) {
+    if (format(result) != "As expected") {
+      backtrace <- list()
+      i <- 1;
+      for (call in result$call) {
+        backtrace <- append(backtrace, paste0(i, ": ", .create_call_message(call)))
+        i <- i + 1
+      }
+      return(backtrace)
+    }
+  }
+  return(list())
+
+}
+
+.create_call_message <- function(call) {
+  call_str <- format(call)
+  call_srcref <- attributes(call)$srcref
+  srcref_data <- c(call_srcref)
+  srcfile_filename <- attributes(call_srcref)$srcfile$filename
+
+  if (is.null(call_srcref)) {
+    message <- paste0(call_str)
+  } else {
+    message <- paste0(call_str, " in ", srcfile_filename, "#", srcref_data[[1]])
+  }
+
+  return(message)
 }

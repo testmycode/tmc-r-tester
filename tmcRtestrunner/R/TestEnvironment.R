@@ -8,7 +8,7 @@
 
 .source_files <- function(test_env, project_path) {
   for (file in list.files(pattern = "[.]R$", path = paste0(project_path, "/R/"), full.names = TRUE)) {
-    sys.source(file, test_env)
+    source(file, test_env, keep.source = getOption("keep.source"))
   }
 }
 

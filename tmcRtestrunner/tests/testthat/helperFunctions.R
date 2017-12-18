@@ -1,16 +1,17 @@
-.for_testing_run_tests_project <- function(project_path) {
-  .GlobalEnv$points <- list()
-  .GlobalEnv$points_for_all_tests <- list()
-  setwd(project_path)
-
+.run_create_file_result_for_files <- function(project_path) {
   test_results <- list()
 
-  #Lists all the files in the path beginning with "test" and ending in ".R"
-  test_files <- list.files(path = "tests/testthat", pattern = "test.*\\.R", full.names = T, recursive = FALSE)
-
+  test_files <- list.files(path = file.path(project_path, "tests", "testthat"), pattern = "test.*\\.R",
+                           full.names = T, recursive = FALSE)
   for (test_file in test_files) {
-    test_results <- c(test_results, test_file(test_file, reporter = "silent"))
+    .GlobalEnv$points <- list()
+    .GlobalEnv$points_for_all_tests <- list()
+    test_env <- .create_test_env(project_path)
+    test_results<- c(test_results, .create_file_results(test_file(test_file, reporter = "silent", env = test_env),
+                                                                   .GlobalEnv$points,
+                                                                  .GlobalEnv$points_for_all_tests))
   }
+
   return(test_results)
 }
 

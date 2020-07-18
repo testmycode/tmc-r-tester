@@ -1,3 +1,4 @@
+globalVariables(c("points"))
 
 .get_available_points <- function(project_path) {
   .init_global_vars()
@@ -48,6 +49,21 @@
     .GlobalEnv$file_points[[.GlobalEnv$counter]] <- c(points)
   }
 }
+
+#' @title Checks the available point for all tests
+#'
+#' @description Checks the available points for all test in the project
+#' without running test. Creates file .available_points.json in the
+#' project root.
+#'
+#' @usage run_available_points(project_path = getwd())
+#'
+#' @param project_path The absolute path to the root of the project being tested.
+#' Default value is current work directory
+#'
+#' @return The function does not return values
+#'
+
 
 # Checks the available points for all test in the project without running test. Creates
 # file .available_points.json in the project root.

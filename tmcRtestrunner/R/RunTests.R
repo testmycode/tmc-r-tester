@@ -1,3 +1,19 @@
+#' @title Run tests from project directory
+#'
+#' @description Runs the tests from project directory and writes results
+#' JSON to the root of the project as .results.json.
+#'
+#' @usage run_tests(project_path = getwd(), print = FALSE)
+#'
+#' @param project_path The absolute path to the root of the project being tested.
+#' Default value is current work directory
+#'
+#' @param print Boolean that prints resulst if true. DEFAULT is FALSE.
+#'
+#' @return List of result data. List keys: \code{runStatus} (string),
+#' \code{backtrace} (list), \code{test_results} (list)
+#'
+
 # Runs the tests from project directory and writes results JSON to the root of the project
 # as .results.json.
 #
@@ -57,7 +73,16 @@ run_tests <- function(project_path = getwd(), print = FALSE) {
 }
 
 .sourcing_error_run_result <- function(sourcing_error) {
-  split_message <- strsplit(sourcing_error$message, split = "\n")
+  cat("Sourcing tests failed:\n")
+  cat("Error in ")
+  cat(deparse(sourcing_error$call))
+  cat(" : ")
+  cat(sourcing_error$message)
+  cat("\n")
+
+  split_message <- 
+    strsplit(paste("Error in ", deparse(sourcing_error$call)," : ",
+		   sourcing_error$message, sep=""), split = "\n")
   backtrace <- lapply(split_message[[1]], unbox)
   return(list("run_status" = "sourcing_failed", "backtrace" = backtrace, "test_results" = list()))
 }
@@ -73,3 +98,4 @@ run_tests <- function(project_path = getwd(), print = FALSE) {
   backtrace <- lapply(split_message[[1]], unbox)
   return(list("run_status" = "run_failed", "backtrace" = backtrace, "test_results" = list()))
 }
+

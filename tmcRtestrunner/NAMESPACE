@@ -1,4 +1,5 @@
 exportPattern("^[[:alpha:]]+")
-import(testthat)
-import(jsonlite)
-import(R.utils)
+importFrom(testthat, test_file, test_that)
+importFrom(jsonlite, unbox, toJSON, prettify)
+importFrom(R.utils, withTimeout)
+importFrom(utils, str)

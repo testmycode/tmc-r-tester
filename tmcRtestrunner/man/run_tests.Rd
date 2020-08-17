@@ -4,13 +4,17 @@
 \alias{run_tests}
 \title{Run tests from project directory}
 \usage{
-run_tests(project_path = getwd(), print = FALSE)
+run_tests(project_path = getwd(), print = FALSE,
+                 addin_data = NULL)
 }
 \arguments{
 \item{project_path}{The absolute path to the root of the project being tested.
 Default value is current work directory}
 
 \item{print}{Boolean that prints resulst if true. DEFAULT is FALSE.}
+
+\item{addin_data}{A named list with addin specific data or NULL, when
+for separating server and addin. Default if FALSE.}
 }
 \value{
 List of result data. List keys: \code{runStatus} (string),

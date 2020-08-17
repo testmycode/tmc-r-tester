@@ -20,4 +20,4 @@ Collate:
   'RunTests.R'
   'GetAvailablePoints.R'
   'TestEnvironment.R'
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1

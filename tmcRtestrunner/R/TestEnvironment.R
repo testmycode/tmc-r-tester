@@ -41,11 +41,29 @@
   for (file in list.files(pattern    = "[.]R$",
                           path       = paste0(project_path, "/R/"),
                           full.names = TRUE)) {
-    source(file, test_env, keep.source = getOption("keep.source"))
+    if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
+        .file_encoding(file) == "UTF-8") {
+      source(file, test_env, keep.source = getOption("keep.source"),
+             encoding = "UTF-8")
+    } else {
+      source(file, test_env, keep.source = getOption("keep.source"))
+    }
   }
 }
 
-
+.file_encoding <- function(fname) {
+  pre_file_type <- tryCatch(system2("file", fname, stdout = TRUE, stderr = FALSE),
+                            error   = function(e) "",
+                            warning = function(e) "")
+  pre_file_type2 <- strsplit(pre_file_type, split = ":")[[1]]
+  if (length(pre_file_type2) == 0) return("")
+  recognizers <- c("ISO-8859", "ASCII", "UTF-8")
+  matches <- recognizers[sapply(recognizers,
+                                function(pattern) {
+                                  grepl(pattern, pre_file_type2[2])
+                                })]
+  ifelse(length(matches), matches, "")
+}
 
 
 # .source_from_test_file <- function(test_location, test_env) {

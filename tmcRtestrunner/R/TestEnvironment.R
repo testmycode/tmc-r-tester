@@ -27,32 +27,76 @@
   define_tester_functions(test_env)
   tryCatch({ override_functions(test_env, project_path) },
            error = .signal_sourcing_error)
-  tryCatch({ .source_files(test_env, project_path, addin_data) },
-           error = .signal_sourcing_error)
+  tryCatch({ test_env <- .source_files(test_env, project_path, addin_data) },
+	   error = .signal_sourcing_error)
   return (test_env)
+}
+
+.short_name <- function(filename) {
+  xx <- filename
+  ll <- unlist(gregexpr("/", xx))
+  substr(xx, ll[length(ll)] + 1, nchar(xx))
+}
+
+.test_name_match <- function(test_filename) {
+  xx <- test_filename
+  xx <- sub(pattern = "^testE",    replacement = "e",  xx)
+  xx <- sub(pattern = "Helper.R$", replacement = ".R", xx)
+  xx <- sub(pattern = "Hidden.R$", replacement = ".R", xx)
+  xx
 }
 
 .source_files <- function(test_env, project_path, addin_data = NULL) {
   if (!is.null(addin_data) && (addin_data$only_test_names)) {
     # we don't source. This is in the wrong place. This needs to
     # be fixed.
-    return()
+    return(test_env)
   }
-  for (file in list.files(pattern    = "[.]R$",
-                          path       = paste0(project_path, "/R/"),
-                          full.names = TRUE)) {
-    if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
-        .file_encoding(file) == "UTF-8") {
-      source(file, test_env, keep.source = getOption("keep.source"),
-             encoding = "UTF-8")
-    } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
-        .file_encoding(file) == "ISO-8859") {
-      source(file, test_env, keep.source = getOption("keep.source"),
-             encoding = "latin1")
-    } else {
-      source(file, test_env, keep.source = getOption("keep.source"))
+  if (!is.null(addin_data)) {
+    # new way
+    test_files         <- addin_data$test_files
+    test_files_short   <- sapply(test_files, FUN = .short_name)
+    test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
+    test_env_list      <- vector("list", length(test_files) + 1)
+    for (file in list.files(pattern    = "[.]R$",
+			    path       = paste0(project_path, "/R/"),
+			    full.names = TRUE)) {
+      if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
+	  .file_encoding(file) == "UTF-8") {
+	source(file, test_env, keep.source = getOption("keep.source"),
+	       encoding = "UTF-8")
+      } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
+	  .file_encoding(file) == "ISO-8859") {
+	source(file, test_env, keep.source = getOption("keep.source"),
+	       encoding = "latin1")
+      } else {
+	source(file, test_env, keep.source = getOption("keep.source"))
+      }
+      for (ind in which(test_files_matches == .short_name(file))) {
+	test_env_list[[ind]] <- test_env
+      }
+      test_env <- new.env(parent = test_env)
+    }
+    test_env <- test_env_list
+  } else {
+    # old way
+    for (file in list.files(pattern    = "[.]R$",
+			    path       = paste0(project_path, "/R/"),
+			    full.names = TRUE)) {
+      if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
+	  .file_encoding(file) == "UTF-8") {
+	source(file, test_env, keep.source = getOption("keep.source"),
+	       encoding = "UTF-8")
+      } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
+	  .file_encoding(file) == "ISO-8859") {
+	source(file, test_env, keep.source = getOption("keep.source"),
+	       encoding = "latin1")
+      } else {
+	source(file, test_env, keep.source = getOption("keep.source"))
+      }
     }
   }
+  return(test_env)
 }
 
 .file_encoding <- function(fname) {

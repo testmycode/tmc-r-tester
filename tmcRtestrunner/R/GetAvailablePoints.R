@@ -37,7 +37,7 @@ globalVariables(c("points"))
 }
 
 .define_counter_functions <- function(test_env, project_path) {
-  .source_files(test_env, project_path)
+  test_env <- .source_files(test_env, project_path)
   test_env$test <- function(desc, point, code){
     if (!(desc %in% .GlobalEnv$test_available_points)) {
       .GlobalEnv$test_available_points[[desc]] <- list()

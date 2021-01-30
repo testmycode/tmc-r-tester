@@ -45,6 +45,10 @@
         .file_encoding(file) == "UTF-8") {
       source(file, test_env, keep.source = getOption("keep.source"),
              encoding = "UTF-8")
+    } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
+        .file_encoding(file) == "ISO-8859") {
+      source(file, test_env, keep.source = getOption("keep.source"),
+             encoding = "latin1")
     } else {
       source(file, test_env, keep.source = getOption("keep.source"))
     }

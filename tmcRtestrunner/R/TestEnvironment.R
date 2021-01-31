@@ -23,7 +23,7 @@
     assign("test", test, envir = test_env)
     lockBinding("test",test_env)
   }
-  test_env <- new.env()
+  test_env <- new.env(parent = parent.env(.GlobalEnv))
   define_tester_functions(test_env)
   tryCatch({ override_functions(test_env, project_path) },
            error = .signal_sourcing_error)

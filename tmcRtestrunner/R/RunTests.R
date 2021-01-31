@@ -37,7 +37,6 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   if (print) {
     .print_results_from_json(json_run_results)
   }
-
   invisible(run_results)
 }
 

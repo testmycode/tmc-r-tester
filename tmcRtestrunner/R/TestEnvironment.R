@@ -52,15 +52,11 @@
     # be fixed.
     return(test_env)
   }
-  if (!is.null(addin_data)) {
-    # new way
-    test_files         <- addin_data$test_files
-    test_files_short   <- sapply(test_files, FUN = .short_name)
-    test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
-    test_env_list      <- vector("list", length(test_files) + 1)
-    for (file in list.files(pattern    = "[.]R$",
-			    path       = paste0(project_path, "/R/"),
-			    full.names = TRUE)) {
+  source_safely <- function(file, test_env) {
+    error_handler <- function(err) {
+      test_env
+    }
+    safe_fn <- function() {
       if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
 	  .file_encoding(file) == "UTF-8") {
 	source(file, test_env, keep.source = getOption("keep.source"),
@@ -72,6 +68,22 @@
       } else {
 	source(file, test_env, keep.source = getOption("keep.source"))
       }
+      return(test_env)
+    }
+    tryCatch({ test_env <- safe_fn() },
+             error = error_handler)
+    return(test_env)
+  }
+  if (!is.null(addin_data)) {
+    # new way
+    test_files         <- addin_data$test_files
+    test_files_short   <- sapply(test_files, FUN = .short_name)
+    test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
+    test_env_list      <- vector("list", length(test_files) + 1)
+    for (file in list.files(pattern    = "[.]R$",
+			    path       = paste0(project_path, "/R/"),
+			    full.names = TRUE)) {
+      test_env <- source_safely(file, test_env)
       for (ind in which(test_files_matches == .short_name(file))) {
 	test_env_list[[ind]] <- test_env
       }
@@ -83,17 +95,7 @@
     for (file in list.files(pattern    = "[.]R$",
 			    path       = paste0(project_path, "/R/"),
 			    full.names = TRUE)) {
-      if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
-	  .file_encoding(file) == "UTF-8") {
-	source(file, test_env, keep.source = getOption("keep.source"),
-	       encoding = "UTF-8")
-      } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
-	  .file_encoding(file) == "ISO-8859") {
-	source(file, test_env, keep.source = getOption("keep.source"),
-	       encoding = "latin1")
-      } else {
-	source(file, test_env, keep.source = getOption("keep.source"))
-      }
+      test_env <- source_safely(file, test_env)
     }
   }
   return(test_env)
@@ -112,16 +114,3 @@
                                 })]
   ifelse(length(matches), matches, "")
 }
-
-
-# .source_from_test_file <- function(test_location, test_env) {
-#   script_name <- basename(test_location)
-#   script_name <- substr(script_name, 5, nchar(script_name))
-#   source_folder <- "R/"
-#   # Checks whether list is empty and if it is, modifies the first letter of the script to lower case.
-#   if (length(list.files(path = source_folder, pattern = script_name, full.names = T, recursive = FALSE)) == 0) {
-#     substr(script_name, 1, 1) <- tolower(substr(script_name, 1, 1))
-#   }
-#   sys.source(paste0(source_folder, script_name), test_env)
-# }
-#

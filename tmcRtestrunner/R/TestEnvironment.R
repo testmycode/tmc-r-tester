@@ -53,9 +53,6 @@
     return(test_env)
   }
   source_safely <- function(file, test_env) {
-    error_handler <- function(err) {
-      test_env
-    }
     safe_fn <- function() {
       if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
 	  .file_encoding(file) == "UTF-8") {
@@ -70,8 +67,19 @@
       }
       return(test_env)
     }
-    tryCatch({ test_env <- safe_fn() },
-             error = error_handler)
+    test_env <- safe_fn()
+    return(test_env)
+  }
+
+  source_safely2 <- function(file, test_env) {
+    wrapper_fn <- function() {
+      test_env <- source_safely(file, test_env)
+      return(list(env = test_env, error_msg = NULL))
+    }
+    error_handler <- function(err) {
+      return(list(env = test_env, error_msg = err$message))
+    }
+    test_env <- tryCatch({ wrapper_fn() }, error = error_handler)
     return(test_env)
   }
   if (!is.null(addin_data)) {
@@ -83,11 +91,11 @@
     for (file in list.files(pattern    = "[.]R$",
 			    path       = paste0(project_path, "/R/"),
 			    full.names = TRUE)) {
-      test_env <- source_safely(file, test_env)
+      test_env <- source_safely2(file, test_env)
       for (ind in which(test_files_matches == .short_name(file))) {
 	test_env_list[[ind]] <- test_env
       }
-      test_env <- new.env(parent = test_env)
+      test_env <- new.env(parent = test_env$env)
     }
     test_env <- test_env_list
   } else {

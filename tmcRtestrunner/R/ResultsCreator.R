@@ -1,12 +1,11 @@
-.create_file_results <- function(testthat_file_output,
-                                 tests_points,
-                                 file_points) {
+.create_file_results <- function(testthat_file_output, tests_points,
+                                 file_points, error_message) {
 
   results <- list()
   for (test in testthat_file_output) {
     name <- test$test
     status <- .get_status_for_test(test)
-    message <- .create_message_for_test(test, status)
+    message <- .create_message_for_test(test, status, error_message)
     backtrace <- .create_backtrace_for_test(test, status)
     points <- .get_points_for_test(name,
                                    tests_points,
@@ -59,17 +58,21 @@
   return(format(result) == "As expected")
 }
 
-.message_from_failed_result <- function(result) {
+.message_from_failed_result <- function(result, error_message) {
   message_rows <- strsplit(result$message, "\n")[[1]]
+  if (!is.null(error_message) & !is.null(result$trace)) {
+    error_message_rows <- strsplit(error_message, "\n")[[1]]
+    message_rows <- c(message_rows, "Possibly due to error:", error_message_rows)
+  }
   return(paste(message_rows, collapse = "\n"))
 }
 
-.create_message_for_test <- function(test, status) {
+.create_message_for_test <- function(test, status, error_message) {
   if (status == "pass") return("")
 
   for (result in test$results) {
     if (format(result) != "As expected") {
-      return(.message_from_failed_result(result))
+      return(.message_from_failed_result(result, error_message))
     }
   }
   return("")

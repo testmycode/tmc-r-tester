@@ -60,11 +60,11 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
       .GlobalEnv$points               <- list()
       .GlobalEnv$points_for_all_tests <- list()
       if (!addin_data$only_test_names) {
-	test_env <- test_env_list[[ind]]
+	test_env_l <- test_env_list[[ind]]
       } else {
-	test_env <- test_env_list
+	test_env_l <- list(env = test_env_list, error_msg = NULL)
       }
-      file_results <- .run_tests_file(test_file, project_path, test_env)
+      file_results <- .run_tests_file(test_file, project_path, test_env_l)
       test_results <- c(test_results, file_results)
     }
   } else {
@@ -76,7 +76,8 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
       # the main loop. This needs to be rewritten
       .GlobalEnv$points               <- list()
       .GlobalEnv$points_for_all_tests <- list()
-      file_results <- .run_tests_file(test_file, project_path, test_env)
+      test_env_l <- list(env = test_env, error_msg = NULL)
+      file_results <- .run_tests_file(test_file, project_path, test_env_l)
       test_results <- c(test_results, file_results)
     }
   }
@@ -85,11 +86,14 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
               test_results = test_results))
 }
 
-.run_tests_file <- function(file_path, project_path, test_env) {
-  test_file_output <- tryCatch({test_file(file_path, reporter = "silent", env = test_env)},
+.run_tests_file <- function(file_path, project_path, test_env_l) {
+  test_env <- test_env_l$env
+  test_file_output <- tryCatch({testthat::test_file(file_path, reporter = "silent", env = test_env)},
                                error = .signal_run_error)
 
-  test_file_results <- .create_file_results(test_file_output, points, .GlobalEnv$points_for_all_tests)
+  test_file_results <- .create_file_results(test_file_output, points,
+					    .GlobalEnv$points_for_all_tests, # <--- FIX THIS
+					    test_env_l$error_msg)
 
   return(test_file_results)
 }

@@ -118,7 +118,7 @@
   recognizers <- c("ISO-8859", "ASCII", "UTF-8")
   matches <- recognizers[sapply(recognizers,
                                 function(pattern) {
-                                  grepl(pattern, pre_file_type2[2])
+                                  grepl(pattern, pre_file_type2[length(pre_file_type2)])
                                 })]
   ifelse(length(matches), matches, "")
 }

@@ -15,26 +15,26 @@ globalVariables(c("points"))
   .GlobalEnv$carry$counter <- val
 }
 
-.map_to_desc_add <- function(idx, val) {
-  .map_to_desc_set(idx, c(.map_to_desc_ref(idx), val))
+.map_to_desc_add <- function(val) {
+  .map_to_desc_set(c(.map_to_desc_ref(), val))
 }
-.map_to_desc_set <- function(idx, val) {
-  .GlobalEnv$carry$map_to_desc[[idx]] <- val
+.map_to_desc_reset <- function() {
+  .map_to_desc_set(list())
 }
-.map_to_desc_ref <- function(idx) {
-  .GlobalEnv$carry$map_to_desc[[idx]]
+.map_to_desc_set <- function(val) {
+  .GlobalEnv$carry$map_to_desc <- val
 }
-.map_to_desc_init <- function() {
-  .GlobalEnv$carry$map_to_desc <- list()
+.map_to_desc_ref <- function() {
+  .GlobalEnv$carry$map_to_desc
 }
-.file_points_init <- function() {
-  .GlobalEnv$carry$file_points <- list()
+.file_points_ref <- function() {
+  .GlobalEnv$carry$file_points
 }
-.file_points_ref <- function(idx) {
-  .GlobalEnv$carry$file_points[[idx]]
+.file_points_reset <- function() {
+  .file_points_set(list())
 }
-.file_points_set <- function(idx, val) {
-  .GlobalEnv$carry$file_points[[idx]] <- val
+.file_points_set <- function(val) {
+  .GlobalEnv$carry$file_points <- val
 }
 .test_available_points_init <- function() {
   .GlobalEnv$test_available_points <- list()
@@ -48,39 +48,34 @@ globalVariables(c("points"))
 }
 
 .get_available_points <- function(project_path) {
-  .add_points <- function() {
-    all_available_points <- list()
-    for (i in (1:unlist(.counter_ref() - 1))) {
-      for (desc in .map_to_desc_ref(i)) {
-	all_available_points[[desc]] <- c(.file_points_ref(i),
-					  .test_available_points_ref(desc))
-      }
-    }
-    return (all_available_points)
-  }
   .dcat("A", project_path)
   .init_global_vars()
+  all_available_points <- list()
   .dcat("B", project_path)
   test_files <- list.files(path = paste0(project_path, "/tests/testthat"),
 			   pattern = "test.*\\.R",
 			   full.names = TRUE, recursive = FALSE)
   .dcat("C", test_files)
   for (test_file in test_files) {
-    .dcat("D", test_file)
-    .map_to_desc_set(.counter_ref(), list())
-    .file_points_set(.counter_ref(), list())
+    .dcat("test_file", test_file)
+    .map_to_desc_reset()
+    .file_points_reset()
     env <- .create_counter_env(project_path)
     testthat::test_file(test_file, reporter = "silent", env = env)
+    for (desc in .map_to_desc_ref()) {
+      all_available_points[[desc]] <- c(.file_points_ref(),
+					.test_available_points_ref(desc))
+    }
     .counter_inc()
   }
-  return (.add_points())
+  return (all_available_points)
 }
 
 .init_global_vars <- function() {
   .counter_init()
   .test_available_points_init()
-  .file_points_init()
-  .map_to_desc_init()
+  .file_points_reset()
+  .map_to_desc_reset()
 }
 
 .create_counter_env <- function(project_path) {
@@ -94,14 +89,11 @@ globalVariables(c("points"))
 .define_counter_functions <- function(test_env, project_path) {
   #test_env <- .source_files(test_env, project_path)
   test_env$test <- function(desc, point, code){
-    .dcat("TTTT1", desc)
-    .dcat("point", point)
     .test_available_points_set(desc, point)
-    .map_to_desc_add(.counter_ref(), desc)
+    .map_to_desc_add(desc)
   }
   test_env$points_for_all_tests <- function(points){
-    .dcat("SSSS2", points)
-    .file_points_set(.counter_ref(), points)
+    .file_points_set(points)
   }
 }
 

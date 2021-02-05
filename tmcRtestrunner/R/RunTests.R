@@ -94,7 +94,6 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   test_file_results <- .create_file_results(test_file_output, points,
 					    .GlobalEnv$points_for_all_tests, # <--- FIX THIS
 					    test_env_l$error_msg)
-
   return(test_file_results)
 }
 

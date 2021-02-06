@@ -47,7 +47,7 @@
 }
 
 .source_files <- function(test_env, project_path, addin_data = NULL) {
-  if (!is.null(addin_data) && (addin_data$only_test_names)) {
+  if (addin_data$only_test_names) {
     # we don't source. This is in the wrong place. This needs to
     # be fixed.
     return(test_env)

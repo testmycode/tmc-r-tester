@@ -51,38 +51,22 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
                            full.names = TRUE,
                            recursive  = FALSE)
 
-  if (!is.null(addin_data)) {
-    # New way
+  .GlobalEnv$points               <- list()
+  .GlobalEnv$points_for_all_tests <- list()
+  addin_data$test_files <- test_files
+  test_env_list  <- .create_test_env(project_path, addin_data)
+  for (ind in seq_along(test_files)) {
+    # the main loop. This needs to be rewritten
+    test_file <- test_files[ind]
     .GlobalEnv$points               <- list()
     .GlobalEnv$points_for_all_tests <- list()
-    addin_data$test_files <- test_files
-    test_env_list  <- .create_test_env(project_path, addin_data)
-    for (ind in seq_along(test_files)) {
-      # the main loop. This needs to be rewritten
-      test_file <- test_files[ind]
-      .GlobalEnv$points               <- list()
-      .GlobalEnv$points_for_all_tests <- list()
-      if (!addin_data$only_test_names) {
-	test_env_l <- test_env_list[[ind]]
-      } else {
-	test_env_l <- list(env = test_env_list, error_msg = NULL)
-      }
-      file_results <- .run_tests_file(test_file, project_path, test_env_l)
-      test_results <- c(test_results, file_results)
+    if (!addin_data$only_test_names) {
+      test_env_l <- test_env_list[[ind]]
+    } else {
+      test_env_l <- list(env = test_env_list, error_msg = NULL)
     }
-  } else {
-    # Run tests just once, but still all at the same time
-    .GlobalEnv$points               <- list()
-    .GlobalEnv$points_for_all_tests <- list()
-    test_env  <- .create_test_env(project_path, addin_data)
-    for (test_file in test_files) {
-      # the main loop. This needs to be rewritten
-      .GlobalEnv$points               <- list()
-      .GlobalEnv$points_for_all_tests <- list()
-      test_env_l <- list(env = test_env, error_msg = NULL)
-      file_results <- .run_tests_file(test_file, project_path, test_env_l)
-      test_results <- c(test_results, file_results)
-    }
+    file_results <- .run_tests_file(test_file, project_path, test_env_l)
+    test_results <- c(test_results, file_results)
   }
   return(list(run_status   = "success",
               backtrace    = list(),

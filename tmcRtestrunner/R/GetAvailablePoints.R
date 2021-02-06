@@ -42,7 +42,7 @@ globalVariables(c("points"))
 			   pattern = "test.*\\.R$",
 			   full.names = TRUE,
 			   recursive = FALSE)
-  env <- .create_counter_env(project_path)
+  env <- .create_point_fetching_env(project_path)
   for (test_file in test_files) {
     .map_to_desc_reset()
     .file_points_reset()
@@ -67,7 +67,7 @@ globalVariables(c("points"))
   .map_to_desc_reset()
 }
 
-.create_counter_env <- function(project_path) {
+.create_point_fetching_env <- function(project_path) {
   test_env <- new.env()
   test_env$test <- function(desc, point, code){
     .test_available_points_set(desc, point)

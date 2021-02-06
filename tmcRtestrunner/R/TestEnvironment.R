@@ -82,30 +82,20 @@
     test_env <- tryCatch({ wrapper_fn() }, error = error_handler)
     return(test_env)
   }
-  if (!is.null(addin_data)) {
-    # new way
-    test_files         <- addin_data$test_files
-    test_files_short   <- sapply(test_files, FUN = .short_name)
-    test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
-    test_env_list      <- vector("list", length(test_files) + 1)
-    for (file in list.files(pattern    = "[.]R$",
-			    path       = paste0(project_path, "/R/"),
-			    full.names = TRUE)) {
-      test_env <- source_safely2(file, test_env)
-      for (ind in which(test_files_matches == .short_name(file))) {
-	test_env_list[[ind]] <- test_env
-      }
-      test_env <- new.env(parent = test_env$env)
+  test_files         <- addin_data$test_files
+  test_files_short   <- sapply(test_files, FUN = .short_name)
+  test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
+  test_env_list      <- vector("list", length(test_files) + 1)
+  for (file in list.files(pattern    = "[.]R$",
+                          path       = paste0(project_path, "/R/"),
+                          full.names = TRUE)) {
+    test_env <- source_safely2(file, test_env)
+    for (ind in which(test_files_matches == .short_name(file))) {
+      test_env_list[[ind]] <- test_env
     }
-    test_env <- test_env_list
-  } else {
-    # old way
-    for (file in list.files(pattern    = "[.]R$",
-			    path       = paste0(project_path, "/R/"),
-			    full.names = TRUE)) {
-      test_env <- source_safely(file, test_env)
-    }
+    test_env <- new.env(parent = test_env$env)
   }
+  test_env <- test_env_list
   return(test_env)
 }
 

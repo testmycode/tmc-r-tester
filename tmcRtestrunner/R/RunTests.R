@@ -27,6 +27,9 @@
 run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) {
   #Runs tests for project and returns the results.
   #If sourcing_error occurs, .sourcing_error_run_results returns the results.
+  if (is.null(addin_data)) {
+    addin_data <- list(only_test_names = FALSE)
+  }
   run_results <- tryCatch({.run_tests_project(project_path, addin_data)},
                           sourcing_error = .sourcing_error_run_result,
                           run_error = .run_error_run_result)

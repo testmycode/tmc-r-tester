@@ -44,7 +44,7 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   test_results <- list()
   # Lists all the files in the path beginning with "test" and ending in ".R"
   test_files <- list.files(path       = file.path(project_path, "tests", "testthat"),
-                           pattern    = "test.*\\.R",
+                           pattern    = "test.*\\.R$",
                            full.names = TRUE,
                            recursive  = FALSE)
 

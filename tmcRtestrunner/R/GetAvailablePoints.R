@@ -39,10 +39,9 @@ globalVariables(c("points"))
   .init_global_vars()
   all_available_points <- list()
   test_files <- list.files(path = paste0(project_path, "/tests/testthat"),
-			   pattern = "test.*\\.R",
-			   full.names = TRUE, recursive = FALSE)
-  .dcat("C", test_files)
-  .dcat("ls", ls(.GlobalEnv))
+			   pattern = "test.*\\.R$",
+			   full.names = TRUE,
+			   recursive = FALSE)
   env <- .create_counter_env(project_path)
   for (test_file in test_files) {
     .map_to_desc_reset()

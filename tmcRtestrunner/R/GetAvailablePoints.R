@@ -69,16 +69,7 @@ globalVariables(c("points"))
 }
 
 .create_counter_env <- function(project_path) {
-  .dcat("E1", project_path)
   test_env <- new.env()
-  .dcat("E2", ls(test_env))
-  .define_counter_functions(test_env, project_path)
-  .dcat("E4", ls(test_env))
-  return (test_env)
-}
-
-.define_counter_functions <- function(test_env, project_path) {
-  #test_env <- .source_files(test_env, project_path)
   test_env$test <- function(desc, point, code){
     .test_available_points_set(desc, point)
     .map_to_desc_add(desc)
@@ -86,7 +77,9 @@ globalVariables(c("points"))
   test_env$points_for_all_tests <- function(points){
     .file_points_set(points)
   }
+  return (test_env)
 }
+
 
 #' @title Checks the available point for all tests
 #'

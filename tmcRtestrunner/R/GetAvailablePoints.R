@@ -98,8 +98,6 @@ globalVariables(c("points"))
 # Checks the available points for all test in the project without running test. Creates
 # file .available_points.json in the project root.
 run_available_points <- function(project_path = getwd()) {
-  available_points <- .get_available_points(project_path)
-
-  json_results <- .create_available_points_json_results(available_points)
-  .write_json(json_results, paste0(project_path, "/.available_points.json"))
+  results <- .get_available_points(project_path)
+  .write_json(results, paste0(project_path, "/.available_points.json"))
 }

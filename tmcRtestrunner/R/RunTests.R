@@ -28,7 +28,8 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   #Runs tests for project and returns the results.
   #If sourcing_error occurs, .sourcing_error_run_results returns the results.
   if (is.null(addin_data)) {
-    addin_data <- list(only_test_names = FALSE)
+    addin_data <- list(only_test_names = FALSE,
+                       server_mode     = TRUE)
   }
   run_results <- tryCatch({.run_tests_project(project_path, addin_data)},
                           sourcing_error = .sourcing_error_run_result,
@@ -75,6 +76,7 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
 
 .run_tests_file <- function(file_path, project_path, test_env_l) {
   test_env <- test_env_l$env
+  .define_tester_functions(test_env)
   test_file_output <- tryCatch({testthat::test_file(file_path, reporter = "silent", env = test_env)},
                                error = .signal_run_error)
 

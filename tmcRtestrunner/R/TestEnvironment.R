@@ -1,32 +1,41 @@
+.define_tester_functions <- function(test_env) {
+  points_for_all_tests  <- function(points) {
+    .GlobalEnv$points_for_all_tests <- points
+  }
+  test <- function(desc, points, code, timeout = 30) {
+    .GlobalEnv$points[[desc]] <- points
+    value <- withTimeout(timeout = timeout,
+                         { testthat::test_that(desc, code) })
+    value
+  }
+  # The test that wraps around test_that()-method and stores the points
+  # to global environment.
+  assign("points_for_all_tests", points_for_all_tests, envir = test_env)
+  # lockBinding("points_for_all_tests", test_env)
+  assign("test", test, envir = test_env)
+  # lockBinding("test",test_env)
+}
+
 .create_test_env <- function(project_path, addin_data) {
+  disable_interactive_on_server <- function(test_env) {
+    if (!is.null(addin_data$server_mode)) {
+      test_env$View <- function(...) {
+        cat("No data viewer.\nSkipping.\n")
+      }
+    }
+  }
   override_functions <- function(test_env, project_path) {
-    mock_path <- paste(sep = .Platform$file.sep, project_path, "tests",
-                        "testthat", "mock.R")
+    mock_path <- paste(sep = .Platform$file.sep,
+                       project_path,
+                       "tests", "testthat", "mock.R")
     if (file.exists(mock_path)) {
         sys.source(mock_path, test_env)
     }
   }
-  define_tester_functions <- function(test_env) {
-    points_for_all_tests  <- function(points) {
-      .GlobalEnv$points_for_all_tests <- points
-    }
-    test <- function(desc, points, code, timeout = 30) {
-      .GlobalEnv$points[[desc]] <- points
-      value <- withTimeout(timeout = timeout,
-                           { test_that(desc, code) })
-      value
-    }
-    #The test that wraps around test_that()-method and stores the points
-    #to global environment.
-    assign("points_for_all_tests", points_for_all_tests, envir = test_env)
-    lockBinding("points_for_all_tests", test_env)
-    assign("test", test, envir = test_env)
-    lockBinding("test",test_env)
-  }
   test_env <- new.env(parent = parent.env(.GlobalEnv))
-  define_tester_functions(test_env)
   tryCatch({ override_functions(test_env, project_path) },
            error = .signal_sourcing_error)
+  disable_interactive_on_server(test_env)
   tryCatch({ test_env <- .source_files(test_env, project_path, addin_data) },
 	   error = .signal_sourcing_error)
   return (test_env)

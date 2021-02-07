@@ -99,10 +99,18 @@
   test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
   test_env_list      <- vector("list", length(test_files) + 1)
   exercise_files <- list.files(pattern    = "[.]R$",
-                      path       = paste0(project_path, "/R/"),
-                      full.names = TRUE)
+                               path       = paste0(project_path, "/", "R"),
+                               full.names = TRUE)
   for (file in exercise_files) {
+    if (!is.null(addin_data$print) && addin_data$print) {
+       cat("Testing file:\t", paste0("...", sub(pattern = dirname(dirname(dirname(dirname(file)))),
+                                                replacement = "",
+                                                file,
+                                                fixed = TRUE)),
+           "\n")
+    }
     test_env <- source_safely2(file, test_env)
+
     matching_files_inds <- which(test_files_matches == .short_name(file))
     for (ind in matching_files_inds) {
       test_env_list[[ind]] <- test_env

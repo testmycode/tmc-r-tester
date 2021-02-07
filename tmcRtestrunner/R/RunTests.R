@@ -31,6 +31,7 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
     addin_data <- list(only_test_names = FALSE,
                        server_mode     = TRUE)
   }
+  addin_data$print <- print
   run_results <- tryCatch({.run_tests_project(project_path, addin_data)},
                           sourcing_error = .sourcing_error_run_result,
                           run_error = .run_error_run_result)
@@ -39,6 +40,7 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   .write_json(json_run_results, file.path(project_path, ".results.json"))
 
   if (print) {
+    cat("\n===  Test results  ============================== \n\n")
     .print_results_from_json(json_run_results)
   }
   invisible(run_results)

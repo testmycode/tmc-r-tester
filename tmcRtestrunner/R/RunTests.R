@@ -25,8 +25,8 @@
 # Returns:
 #   Run results list containing: runStatus (string), backtrace (list), test_results (list)
 run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) {
-  #Runs tests for project and returns the results.
-  #If sourcing_error occurs, .sourcing_error_run_results returns the results.
+  # Runs tests for project and returns the results.
+  # If sourcing_error occurs, .sourcing_error_run_result returns the results.
   if (is.null(addin_data)) {
     addin_data <- list(only_test_names = FALSE,
                        server_mode     = TRUE)

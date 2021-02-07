@@ -88,6 +88,7 @@
       return(list(env = test_env, error_msg = NULL))
     }
     error_handler <- function(err) {
+      old_run_result <- .sourcing_error_run_result(err)
       return(list(env = test_env, error_msg = err$message))
     }
     test_env <- tryCatch({ wrapper_fn() }, error = error_handler)

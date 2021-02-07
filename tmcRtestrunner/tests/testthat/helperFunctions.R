@@ -21,11 +21,6 @@
       test_env_l <- list(env = test_env_list, error_msg = NULL)
     }
     file_results <- .run_tests_file(test_file, project_path, test_env_l)
-#     .create_file_results(test_file(test_file, reporter = "silent", env = test_env),
-#                                          .GlobalEnv$points,
-#                                          .GlobalEnv$points_for_all_tests,
-#                                          test_env_l$error_msg)
-
     test_results <- c(test_results, file_results)
   }
 

@@ -1,7 +1,7 @@
 Package: tmcRtestrunner
 Type: Package
 Title: Runs TMC R projects
-Version: 0.2.1
+Version: 0.2.2
 Author: RTMC
 Maintainer: Petteri Piiroinen <petteri.piiroinen@gmail.com>
 Description: More about what it does (maybe more than one line)

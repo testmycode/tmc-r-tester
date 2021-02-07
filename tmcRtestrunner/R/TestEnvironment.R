@@ -37,7 +37,7 @@
            error = .signal_sourcing_error)
   disable_interactive_on_server(test_env)
   tryCatch({ test_env <- .source_files(test_env, project_path, addin_data) },
-	   error = .signal_sourcing_error)
+           error = .signal_sourcing_error)
   return (test_env)
 }
 
@@ -49,7 +49,9 @@
 
 .test_name_match <- function(test_filename) {
   xx <- test_filename
-  xx <- sub(pattern = "^testE",    replacement = "e",  xx)
+  xx <- sub(pattern = "^test",     replacement = "",  xx)
+  xx <- sub(pattern = "^(.[a-z])", replacement = "\\L\\1", xx, perl = TRUE)
+  xx <- sub(pattern = "^[A-Z]",    replacement = "",  xx)
   xx <- sub(pattern = "Helper.R$", replacement = ".R", xx)
   xx <- sub(pattern = "Hidden.R$", replacement = ".R", xx)
   xx
@@ -64,15 +66,15 @@
   source_safely <- function(file, test_env) {
     safe_fn <- function() {
       if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
-	  .file_encoding(file) == "UTF-8") {
-	source(file, test_env, keep.source = getOption("keep.source"),
-	       encoding = "UTF-8")
+          .file_encoding(file) == "UTF-8") {
+        source(file, test_env, keep.source = getOption("keep.source"),
+               encoding = "UTF-8")
       } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
-	  .file_encoding(file) == "ISO-8859") {
-	source(file, test_env, keep.source = getOption("keep.source"),
-	       encoding = "latin1")
+                 .file_encoding(file) == "ISO-8859") {
+        source(file, test_env, keep.source = getOption("keep.source"),
+               encoding = "latin1")
       } else {
-	source(file, test_env, keep.source = getOption("keep.source"))
+        source(file, test_env, keep.source = getOption("keep.source"))
       }
       return(test_env)
     }
@@ -95,11 +97,13 @@
   test_files_short   <- sapply(test_files, FUN = .short_name)
   test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
   test_env_list      <- vector("list", length(test_files) + 1)
-  for (file in list.files(pattern    = "[.]R$",
-                          path       = paste0(project_path, "/R/"),
-                          full.names = TRUE)) {
+  exercise_files <- list.files(pattern    = "[.]R$",
+                      path       = paste0(project_path, "/R/"),
+                      full.names = TRUE)
+  for (file in exercise_files) {
     test_env <- source_safely2(file, test_env)
-    for (ind in which(test_files_matches == .short_name(file))) {
+    matching_files_inds <- which(test_files_matches == .short_name(file))
+    for (ind in matching_files_inds) {
       test_env_list[[ind]] <- test_env
     }
     test_env <- new.env(parent = test_env$env)

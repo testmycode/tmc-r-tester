@@ -51,7 +51,6 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
                            pattern    = "test.*\\.R$",
                            full.names = TRUE,
                            recursive  = FALSE)
-
   .GlobalEnv$points               <- list()
   .GlobalEnv$points_for_all_tests <- list()
   addin_data$test_files <- test_files
@@ -100,7 +99,7 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   cat(sourcing_error$message)
   cat("\n")
 
-  split_message <- 
+  split_message <-
     strsplit(paste("Error in ", deparse(sourcing_error$call)," : ",
                    sourcing_error$message, sep = ""),
              split = "\n")

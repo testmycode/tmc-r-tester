@@ -35,6 +35,8 @@ globalVariables(c("points"))
   .GlobalEnv$container$test_available_points[[idx]] <- val
 }
 
+#' @importFrom testthat test_file
+
 .get_available_points <- function(project_path) {
   .init_global_vars()
   all_available_points <- list()
@@ -97,6 +99,7 @@ globalVariables(c("points"))
 
 # Checks the available points for all test in the project without running test. Creates
 # file .available_points.json in the project root.
+#' @export
 run_available_points <- function(project_path = getwd()) {
   results <- .get_available_points(project_path)
   .write_json(results, paste0(project_path, "/.available_points.json"))

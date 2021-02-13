@@ -1,3 +1,6 @@
+#' @importFrom R.utils withTimeout
+#' @importFrom testthat test_that
+#' @importFrom utils str
 .define_tester_functions <- function(test_env) {
   points_for_all_tests  <- function(points) {
     .GlobalEnv$points_for_all_tests <- points
@@ -66,11 +69,11 @@
   source_safely <- function(file, test_env) {
     safe_fn <- function() {
       if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
-          .file_encoding(file) == "UTF-8") {
+          file_encoding(file) == "UTF-8") {
         source(file, test_env, keep.source = getOption("keep.source"),
                encoding = "UTF-8")
       } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
-                 .file_encoding(file) == "ISO-8859") {
+                 file_encoding(file) == "ISO-8859") {
         source(file, test_env, keep.source = getOption("keep.source"),
                encoding = "latin1")
       } else {
@@ -121,8 +124,26 @@
   return(test_env)
 }
 
-.file_encoding <- function(fname) {
-  pre_file_type <- tryCatch(system2("file", fname, stdout = TRUE, stderr = FALSE),
+#' @title File encoding of exercise file
+#'
+#' @description This function tries to determine the file encoding of
+#' the exercise file. It is a wrapper around 'file' executable and if
+#' that is missing, it will return unrecognized value.
+#'
+#' @usage file_encoding(filename)
+#'
+#' @param filename a string which is the name of the file tested for
+#' encoding.
+#'
+#' @return a string which is either "ISO-8859", "ASCII", "UTF-8" or ""
+#' depending on the encoding of the filename. The empty string means
+#' either other file encoding or it can mean that the 'file' executable
+#' was not found from the operating system PATH of executable files.
+#'
+
+#' @export
+file_encoding <- function(filename) {
+  pre_file_type <- tryCatch(system2("file", filename, stdout = TRUE, stderr = FALSE),
                             error   = function(e) "",
                             warning = function(e) "")
   pre_file_type2 <- strsplit(pre_file_type, split = ":")[[1]]

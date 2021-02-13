@@ -19,6 +19,9 @@
   return(test_result)
 }
 
+#' @importFrom jsonlite toJSON
+#' @importFrom jsonlite prettify
+
 # Writes JSON based on the whole test or available points result.
 .write_json <- function(results, filename) {
   # json utf-8 coded:

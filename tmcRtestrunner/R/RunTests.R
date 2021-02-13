@@ -1,3 +1,5 @@
+#' @exportPattern "^[[:alpha:]]+"
+
 #' @title Run tests from project directory
 #'
 #' @description Runs the tests from project directory and writes results
@@ -25,6 +27,8 @@
 #
 # Returns:
 #   Run results list containing: runStatus (string), backtrace (list), test_results (list)
+
+#' @export
 run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) {
   # Runs tests for project and returns the results.
   # If sourcing_error occurs, .sourcing_error_run_result returns the results.
@@ -46,6 +50,8 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   }
   invisible(run_results)
 }
+
+#' @importFrom testthat test_file
 
 .run_tests_project <- function(project_path, addin_data) {
   test_results <- list()
@@ -93,6 +99,8 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   class(sourcing_error) <- c("sourcing_error", class(sourcing_error))
   signalCondition(sourcing_error)
 }
+
+#' @importFrom jsonlite unbox
 
 .sourcing_error_run_result <- function(sourcing_error) {
   cat("Sourcing tests failed:\n")

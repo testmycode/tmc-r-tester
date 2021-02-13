@@ -3,8 +3,9 @@
 #' @description Runs the tests from project directory and writes results
 #' JSON to the root of the project as .results.json.
 #'
-#' @usage run_tests(project_path = getwd(), print = FALSE,
-#'                  addin_data = NULL)
+#' @usage
+#' run_tests(project_path = getwd(), print = FALSE,
+#'           addin_data = NULL)
 #'
 #' @param project_path The absolute path to the root of the project being tested.
 #' Default value is current work directory
@@ -12,7 +13,7 @@
 #' @param print Boolean that prints resulst if true. DEFAULT is FALSE.
 #'
 #' @param addin_data A named list with addin specific data or NULL, when
-#' for separating server and addin. Default if FALSE.
+#' for separating server and addin. Default if NULL.
 #'
 #' @return List of result data. List keys: \code{runStatus} (string),
 #' \code{backtrace} (list), \code{test_results} (list)

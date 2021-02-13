@@ -12,9 +12,15 @@
 
 
 The project was created as a Software Engineering Lab project at the Department of Computer Science in the University of Helsinki. The authors are:
+
 * Antti Haapaniemi ([anttihaap](https://github.com/anttihaap))
 * Janne Hyttinen ([hyttijan](https://github.com/hyttijan))
 * Tuomo Lehtonen ([tmoo](https://github.com/tmoo))
 * Eero Ojala ([eerojala](https://github.com/eerojala))
 * Samu Vaittinen ([samuvait](https://github.com/samuvait))
 * Aleksis Vuoksenmaa ([aleksisv](https://github.com/aleksisv))
+
+
+Current maintainer
+
+* Petteri Piiroinen ([petteripiiroinen](https://github.com/petteripiiroinen))

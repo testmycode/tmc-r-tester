@@ -19,6 +19,13 @@
   # lockBinding("test",test_env)
 }
 
+.path_to_excersise_files <- function(project_path) {
+  exercise_files <- list.files(pattern    = "[.]R$",
+                               path       = paste0(project_path, "/", "R"),
+                               full.names = TRUE)
+  exercise_files
+}
+
 .create_test_env <- function(project_path, addin_data) {
   disable_interactive_on_server <- function(test_env) {
     if (!is.null(addin_data$server_mode)) {
@@ -35,6 +42,29 @@
         sys.source(mock_path, test_env)
     }
   }
+  .include_libraries <- function(exercise_files) {
+    library_expr <- function(expr) {
+      deparse(expr[[1]]) == "library"
+    }
+    for (ex in exercise_files) {
+      code_exprs <- parse(file = ex)
+      for (expr in code_exprs) {
+        if (library_expr(expr)) {
+          eval(expr)
+        }
+      }
+    }
+  }
+  exercise_files <- .path_to_excersise_files(project_path)
+  tryCatch({
+    .include_libraries(exercise_files)
+  }, error = function(err) {
+      # silently skipping error, so that it will be signalled properly
+      42
+    }
+  )
+
+
   test_env <- new.env(parent = parent.env(.GlobalEnv))
   tryCatch({ override_functions(test_env, project_path) },
            error = .signal_sourcing_error)
@@ -97,19 +127,21 @@
     test_env <- tryCatch({ wrapper_fn() }, error = error_handler)
     return(test_env)
   }
+
+  exercise_files     <- .path_to_excersise_files(project_path)
   test_files         <- addin_data$test_files
   test_files_short   <- sapply(test_files, FUN = .short_name)
   test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
   test_env_list      <- vector("list", length(test_files) + 1)
-  exercise_files <- list.files(pattern    = "[.]R$",
-                               path       = paste0(project_path, "/", "R"),
-                               full.names = TRUE)
+
   for (file in exercise_files) {
     if (!is.null(addin_data$print) && addin_data$print) {
-       cat("Testing file:\t", paste0("...", sub(pattern = dirname(dirname(dirname(dirname(file)))),
-                                                replacement = "",
-                                                file,
-                                                fixed = TRUE)),
+       cat("Testing file:\t",
+           paste0("...",
+                  sub(pattern = dirname(dirname(dirname(dirname(file)))),
+                      replacement = "",
+                      file,
+                      fixed = TRUE)),
            "\n")
     }
     test_env <- source_safely2(file, test_env)

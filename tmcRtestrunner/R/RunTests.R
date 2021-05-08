@@ -85,11 +85,16 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
 .run_tests_file <- function(file_path, project_path, test_env_l) {
   test_env <- test_env_l$env
   .define_tester_functions(test_env)
-  test_file_output <- tryCatch({testthat::test_file(file_path, reporter = "silent", env = test_env)},
-                               error = .signal_run_error)
+  test_file_output <- tryCatch({
+    testthat::test_file(file_path,
+                        reporter = "silent",
+                        env = test_env)
+  }, error = .signal_run_error)
 
-  test_file_results <- .create_file_results(test_file_output, points,
-                                            .GlobalEnv$points_for_all_tests, # <--- FIX THIS
+  test_file_results <- .create_file_results(test_file_output,
+                                            points,
+                                            .GlobalEnv$points_for_all_tests,
+                                                    # <--- FIX THIS
                                             test_env_l$error_msg)
   return(test_file_results)
 }

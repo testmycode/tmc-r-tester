@@ -56,13 +56,11 @@
     }
   }
   exercise_files <- .path_to_excersise_files(project_path)
-  tryCatch({
-    .include_libraries(exercise_files)
-  }, error = function(err) {
-      # silently skipping error, so that it will be signalled properly
-      42
-    }
-  )
+  tryCatch(expr  = .include_libraries(exercise_files),
+           error = function(err) {
+             # silently skipping error, so that it will be signalled properly
+             42
+           })
 
 
   test_env <- new.env(parent = parent.env(.GlobalEnv))
@@ -90,19 +88,15 @@
   xx
 }
 
-.source_files <- function(test_env, project_path, addin_data = NULL) {
-  if (addin_data$only_test_names) {
-    # we don't source. This is in the wrong place. This needs to
-    # be fixed.
-    return(test_env)
-  }
+.source_safely2 <- function(file, test_env) {
   source_safely <- function(file, test_env) {
     safe_fn <- function() {
       if (!is.null(.Platform$OS.type) && .Platform$OS.type == "windows" &&
           file_encoding(file) == "UTF-8") {
         source(file, test_env, keep.source = getOption("keep.source"),
                encoding = "UTF-8")
-      } else if (!is.null(.Platform$OS.type) && .Platform$OS.type != "windows" &&
+      } else if (!is.null(.Platform$OS.type) &&
+                 .Platform$OS.type != "windows" &&
                  file_encoding(file) == "ISO-8859") {
         source(file, test_env, keep.source = getOption("keep.source"),
                encoding = "latin1")
@@ -114,17 +108,24 @@
     test_env <- safe_fn()
     return(test_env)
   }
+  wrapper_fn <- function() {
+    test_env <- source_safely(file, test_env)
+    return(list(env = test_env, error_msg = NULL))
+  }
+  error_handler <- function(err) {
+    # check this and fix it
+    # old_run_result < - .sourcing_error_run_result(err)
+    .sourcing_error_run_result(err)
+    return(list(env = test_env, error_msg = err$message))
+  }
+  test_env <- tryCatch(expr = wrapper_fn(), error = error_handler)
+  return(test_env)
+}
 
-  source_safely2 <- function(file, test_env) {
-    wrapper_fn <- function() {
-      test_env <- source_safely(file, test_env)
-      return(list(env = test_env, error_msg = NULL))
-    }
-    error_handler <- function(err) {
-      old_run_result <- .sourcing_error_run_result(err)
-      return(list(env = test_env, error_msg = err$message))
-    }
-    test_env <- tryCatch({ wrapper_fn() }, error = error_handler)
+.source_files <- function(test_env, project_path, addin_data = NULL) {
+  if (addin_data$only_test_names) {
+    # we don't source. This is in the wrong place. This needs to
+    # be fixed.
     return(test_env)
   }
 
@@ -144,7 +145,7 @@
                       fixed = TRUE)),
            "\n")
     }
-    test_env <- source_safely2(file, test_env)
+    test_env <- .source_safely2(file, test_env)
 
     matching_files_inds <- which(test_files_matches == .short_name(file))
     for (ind in matching_files_inds) {
@@ -175,7 +176,9 @@
 
 #' @export
 file_encoding <- function(filename) {
-  pre_file_type <- tryCatch(system2("file", filename, stdout = TRUE, stderr = FALSE),
+  pre_file_type <- tryCatch(system2("file", filename,
+                                    stdout = TRUE,
+                                    stderr = FALSE),
                             error   = function(e) "",
                             warning = function(e) "")
   pre_file_type2 <- strsplit(pre_file_type, split = ":")[[1]]
@@ -183,7 +186,8 @@ file_encoding <- function(filename) {
   recognizers <- c("ISO-8859", "ASCII", "UTF-8")
   matches <- recognizers[sapply(recognizers,
                                 function(pattern) {
-                                  grepl(pattern, pre_file_type2[length(pre_file_type2)])
+                                  grepl(pattern,
+                                        pre_file_type2[length(pre_file_type2)])
                                 })]
   ifelse(length(matches), matches, "")
 }

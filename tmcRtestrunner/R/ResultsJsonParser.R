@@ -1,11 +1,14 @@
 .create_json_run_results <- function(run_results) {
+  # reimplement this list building... this is just awkward and hacky
   json_test_results <- list()
   for (test_result in run_results$test_results) {
-    json_test_results[[length(json_test_results) + 1]] <- .create_json_test_result(test_result)
+    json_test_results[[length(json_test_results) + 1]] <-
+      .create_json_test_result(test_result)
   }
-  json_run_results <- list("runStatus"   = jsonlite::unbox(run_results$run_status),
-                           "backtrace"   = lapply(run_results$backtrace, jsonlite::unbox),
-                           "testResults" = json_test_results)
+  json_run_results <-
+    list("runStatus"   = jsonlite::unbox(run_results$run_status),
+         "backtrace"   = lapply(run_results$backtrace, jsonlite::unbox),
+         "testResults" = json_test_results)
   return(json_run_results)
 }
 

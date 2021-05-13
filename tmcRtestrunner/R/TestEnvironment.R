@@ -8,12 +8,13 @@
   test <- function(desc, points, code, timeout = 30) {
     .GlobalEnv$points[[desc]] <- points
     value <- withTimeout(timeout = timeout,
-                         { testthat::test_that(desc, code) })
+                         expr    = testthat::test_that(desc, code))
     value
   }
   # The test that wraps around test_that()-method and stores the points
   # to global environment.
   assign("points_for_all_tests", points_for_all_tests, envir = test_env)
+  # test what to do with these!!!
   # lockBinding("points_for_all_tests", test_env)
   assign("test", test, envir = test_env)
   # lockBinding("test",test_env)
@@ -64,12 +65,14 @@
 
 
   test_env <- new.env(parent = parent.env(.GlobalEnv))
-  tryCatch({ override_functions(test_env, project_path) },
+  tryCatch(expr  = override_functions(test_env, project_path),
            error = .signal_sourcing_error)
   disable_interactive_on_server(test_env)
-  tryCatch({ test_env <- .source_files(test_env, project_path, addin_data) },
+  tryCatch(expr = {
+             test_env <- .source_files(test_env, project_path, addin_data)
+           },
            error = .signal_sourcing_error)
-  return (test_env)
+  return(test_env)
 }
 
 .short_name <- function(filename) {

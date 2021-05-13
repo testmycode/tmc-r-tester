@@ -67,9 +67,9 @@
   if (!is.null(error_message) & !is.null(result$trace)) {
     error_message_rows <- strsplit(error_message, "\n")[[1]]
     message_rows <- c(message_rows,
-		      "",
-		      .in_green("Possibly due to error:"),
-		      error_message_rows)
+                      "",
+                      .in_green("Possibly due to error:"),
+                      error_message_rows)
   }
   return(paste(message_rows, collapse = "\n"))
 }

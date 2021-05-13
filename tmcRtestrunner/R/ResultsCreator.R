@@ -85,7 +85,8 @@
   return("")
 }
 
-.create_backtrace_for_test <- function(testthat_test_result, status, error_message) {
+.create_backtrace_for_test <- function(testthat_test_result, status,
+                                       error_message) {
   if (status == "pass") return(list())
 
   for (result in testthat_test_result$results) {
@@ -96,7 +97,8 @@
 # Later this will be just removed
 #      for (call in result$trace$calls) {
       for (call in result$calls) {
-        backtrace <- append(backtrace, paste0(i, ": ", .create_call_message(call)))
+        backtrace <- append(backtrace,
+                            paste0(i, ": ", .create_call_message(call)))
         i <- i + 1
       }
       return(backtrace)

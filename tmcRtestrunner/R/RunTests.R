@@ -9,7 +9,8 @@
 #' run_tests(project_path = getwd(), print = FALSE,
 #'           addin_data = NULL)
 #'
-#' @param project_path The absolute path to the root of the project being tested.
+#' @param project_path
+#' The absolute path to the root of the project being tested.
 #' Default value is current work directory
 #'
 #' @param print Boolean that prints resulst if true. DEFAULT is FALSE.
@@ -26,10 +27,12 @@
 #  print: If TRUE, prints results; if not, not. DEFAULT is FALSE.
 #
 # Returns:
-#   Run results list containing: runStatus (string), backtrace (list), test_results (list)
+#   Run results list containing: runStatus (string), backtrace (list),
+#   test_results (list)
 
 #' @export
-run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) {
+run_tests <- function(project_path = getwd(), print = FALSE,
+                      addin_data = NULL) {
   # Runs tests for project and returns the results.
   # If sourcing_error occurs, .sourcing_error_run_result returns the results.
   if (is.null(addin_data)) {
@@ -37,9 +40,11 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
                        server_mode     = TRUE)
   }
   addin_data$print <- print
-  run_results <- tryCatch({.run_tests_project(project_path, addin_data)},
+  run_results <- tryCatch(expr = {
+                            .run_tests_project(project_path, addin_data)
+                          },
                           sourcing_error = .sourcing_error_run_result,
-                          run_error = .run_error_run_result)
+                          run_error      = .run_error_run_result)
 
   json_run_results <- .create_json_run_results(run_results)
   .write_json(json_run_results, file.path(project_path, ".results.json"))
@@ -56,7 +61,9 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
 .run_tests_project <- function(project_path, addin_data) {
   test_results <- list()
   # Lists all the files in the path beginning with "test" and ending in ".R"
-  test_files <- list.files(path       = file.path(project_path, "tests", "testthat"),
+  test_files <- list.files(path       = file.path(project_path,
+                                                  "tests",
+                                                  "testthat"),
                            pattern    = "test.*\\.R$",
                            full.names = TRUE,
                            recursive  = FALSE)
@@ -85,11 +92,12 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
 .run_tests_file <- function(file_path, project_path, test_env_l) {
   test_env <- test_env_l$env
   .define_tester_functions(test_env)
-  test_file_output <- tryCatch({
-    testthat::test_file(file_path,
-                        reporter = "silent",
-                        env = test_env)
-  }, error = .signal_run_error)
+  test_file_output <- tryCatch(expr = {
+                                 testthat::test_file(file_path,
+                                                     reporter = "silent",
+                                                     env = test_env)
+                              },
+                              error = .signal_run_error)
 
   test_file_results <- .create_file_results(test_file_output,
                                             points,
@@ -116,11 +124,15 @@ run_tests <- function(project_path = getwd(), print = FALSE, addin_data = NULL) 
   cat("\n")
 
   split_message <-
-    strsplit(paste("Error in ", deparse(sourcing_error$call)," : ",
+    strsplit(paste("Error in ",
+                   deparse(sourcing_error$call),
+                   " : ",
                    sourcing_error$message, sep = ""),
              split = "\n")
   backtrace <- lapply(split_message[[1]], unbox)
-  return(list("run_status" = "sourcing_failed", "backtrace" = backtrace, "test_results" = list()))
+  return(list("run_status"   = "sourcing_failed",
+              "backtrace"    = backtrace,
+              "test_results" = list()))
 }
 
 .signal_run_error <- function(error) {

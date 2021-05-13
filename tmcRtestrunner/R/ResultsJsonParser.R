@@ -7,12 +7,11 @@
 
 #Creates JSON for each different test case.
 .create_json_test_result <- function(test_result) {
-  test_result <- list(status   = jsonlite::unbox(test_result$status),
-                     name      = jsonlite::unbox(format(test_result$name)),
-                     message   = jsonlite::unbox(test_result$message),
-                     backtrace = lapply(test_result$backtrace, jsonlite::unbox),
-                     points    = test_result$points)
-  return(test_result)
+  list(status    = jsonlite::unbox(test_result$status),
+       name      = jsonlite::unbox(format(test_result$name)),
+       message   = jsonlite::unbox(test_result$message),
+       backtrace = lapply(test_result$backtrace, jsonlite::unbox),
+       points    = test_result$points)
 }
 
 #' @importFrom jsonlite toJSON

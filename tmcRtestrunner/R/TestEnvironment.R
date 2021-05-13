@@ -110,13 +110,11 @@
     return(test_env)
   }
   wrapper_fn <- function() {
-    test_env <- source_safely(file, test_env)
-    return(list(env = test_env, error_msg = NULL))
+    return(list(env       = source_safely(file, test_env),
+                error_msg = NULL))
   }
   error_handler <- function(err) {
-    cat("Sourcing tests failed:\n")
-    cat(err$message)
-    cat("\n")
+    cat(paste("Sourcing tests failed:", err$message, sep = "\n"))
     return(list(env       = test_env,
                 error_msg = err$message))
   }

@@ -1,11 +1,8 @@
 .create_json_run_results <- function(run_results) {
-  json_test_results <- lapply(X   = run_results$test_result,
-                              FUN = .create_json_test_result)
-  json_run_results  <-
-    list(runStatus   = jsonlite::unbox(run_results$run_status),
-         backtrace   = lapply(run_results$backtrace, jsonlite::unbox),
-         testResults = json_test_results)
-  return(json_run_results)
+  list(runStatus   = jsonlite::unbox(run_results$run_status),
+       backtrace   = lapply(run_results$backtrace, jsonlite::unbox),
+       testResults = lapply(X   = run_results$test_result,
+                            FUN = .create_json_test_result))
 }
 
 #Creates JSON for each different test case.

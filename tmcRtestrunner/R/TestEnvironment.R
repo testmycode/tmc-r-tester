@@ -14,10 +14,7 @@
   # The test that wraps around test_that()-method and stores the points
   # to global environment.
   assign("points_for_all_tests", points_for_all_tests, envir = test_env)
-  # test what to do with these!!!
-  # lockBinding("points_for_all_tests", test_env)
   assign("test", test, envir = test_env)
-  # lockBinding("test",test_env)
 }
 
 .path_to_excersise_files <- function(project_path) {

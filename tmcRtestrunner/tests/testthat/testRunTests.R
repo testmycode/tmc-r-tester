@@ -167,19 +167,27 @@ test_that("RunTests doesn't print on print = FALSE", {
   expect_silent(run_tests(simple_all_tests_pass_project_path, print = FALSE))
 })
 
+in_green <- function(str) {
+  paste0("\033[32m", str, "\033[39m")
+}
+
 test_that("Sourcing fail handled accordingly.", {
   remove_old_results_json(simple_sourcing_fail_project_path)
 
   run_tests(simple_sourcing_fail_project_path)
-  results_json <- read_json(paste(sep = "", simple_sourcing_fail_project_path, "/.results.json"))
-
-  expected_backtrace <- list("1: base::source(\"../../R/main.R\") in testMain.R#3")
+  results_json <- read_json(paste(sep = "",
+                                  simple_sourcing_fail_project_path,
+                                  "/.results.json"))
+  # for CLI the backtrace is useful, so leaving this here
+  # for documenting... well no, the backtrace is now part of the message
+  expected_backtrace <- list()
   expected_message   <- paste(sep = "\n",
                               "../../R/main.R:7:9: unexpected 'in'",
                               "6: ret_one <- function() {",
                               "7:   error in",
                               "           ^",
-                              "Possibly due to error:",
+                              "",
+                              in_green("Possibly due to error:"),
                               paste0(substr(simple_sourcing_fail_project_path, 1, 125),
                                      ":7:9: unexpected 'in'"),
                               "6: ret_one <- function() {",
@@ -190,18 +198,15 @@ test_that("Sourcing fail handled accordingly.", {
                                     message   = expected_message,
                                     backtrace = expected_backtrace,
                                     points    = list()))
-  # runStatus whould be "sourcing_failed", backtrace empty and testResults empty
-  expect_equal(results_json$runStatus, "success") # "sourcing_failed")
-  # fix this eventually to correspond to failure
+  # runStatus would be "sourcing_fail", backtrace empty and testResults empty
+  expect_equal(results_json$runStatus, "success")
   expect_equal(results_json$testResults, expected_test_result)
 
-  # Backtrace should contain correct error:
-  # So this is to be fixed
+  # Backtrace should contain the correct error but it is already
+  # parsed to message so that is fine.
+  #
+  # Maybe when tester is ran in CLI we could have map it traceback
   expect_equal(length(results_json$backtrace), 0)
-#  expect_true(grepl(":7:9: unexpected 'in'",results_json$backtrace[[1]]))
-#  expect_equal("6: ret_one <- function() {", results_json$backtrace[[2]])
-#  expect_equal("7:   error in", results_json$backtrace[[3]])
-#  expect_equal("           ^", results_json$backtrace[[4]])
 })
 
 test_that("Run fail handled accordingly.", {

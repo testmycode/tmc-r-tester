@@ -58,11 +58,18 @@
   return(format(result) == "As expected")
 }
 
+.in_green <- function(str) {
+  paste0("\033[32m", str, "\033[39m")
+}
+
 .message_from_failed_result <- function(result, error_message) {
   message_rows <- strsplit(result$message, "\n")[[1]]
   if (!is.null(error_message) & !is.null(result$trace)) {
     error_message_rows <- strsplit(error_message, "\n")[[1]]
-    message_rows <- c(message_rows, "", "\033[32mPossibly due to error:\033[39m", error_message_rows)
+    message_rows <- c(message_rows,
+		      "",
+		      .in_green("Possibly due to error:"),
+		      error_message_rows)
   }
   return(paste(message_rows, collapse = "\n"))
 }

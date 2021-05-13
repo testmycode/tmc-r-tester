@@ -27,9 +27,10 @@
 .create_test_env <- function(project_path, addin_data) {
   disable_interactive_on_server <- function(test_env) {
     if (!is.null(addin_data$server_mode)) {
-      test_env$View <- function(...) {
+      skip_view_fn <- function(...) {
         cat("No data viewer.\nSkipping.\n")
       }
+      assign("View", skip_view_fn, envir = test_env)
     }
   }
   override_functions <- function(test_env, project_path) {
@@ -113,10 +114,11 @@
     return(list(env = test_env, error_msg = NULL))
   }
   error_handler <- function(err) {
-    # check this and fix it
-    # old_run_result < - .sourcing_error_run_result(err)
-    .sourcing_error_run_result(err)
-    return(list(env = test_env, error_msg = err$message))
+    cat("Sourcing tests failed:\n")
+    cat(err$message)
+    cat("\n")
+    return(list(env       = test_env,
+                error_msg = err$message))
   }
   test_env <- tryCatch(expr = wrapper_fn(), error = error_handler)
   return(test_env)

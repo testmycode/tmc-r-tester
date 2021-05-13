@@ -41,9 +41,9 @@ globalVariables(c("points"))
   .init_global_vars()
   all_available_points <- list()
   test_files <- list.files(path = paste0(project_path, "/tests/testthat"),
-			   pattern = "test.*\\.R$",
-			   full.names = TRUE,
-			   recursive = FALSE)
+                           pattern = "test.*\\.R$",
+                           full.names = TRUE,
+                           recursive = FALSE)
   env <- .create_point_fetching_env(project_path)
   for (test_file in test_files) {
     .map_to_desc_reset()
@@ -51,11 +51,11 @@ globalVariables(c("points"))
     testthat::test_file(test_file, reporter = "silent", env = env)
     for (desc in .map_to_desc_ref()) {
       all_available_points[[desc]] <- c(.file_points_ref(),
-					.test_available_points_ref(desc))
+                                        .test_available_points_ref(desc))
     }
   }
   .remove_global_vars()
-  return (all_available_points)
+  return(all_available_points)
 }
 
 .remove_global_vars <- function() {
@@ -71,14 +71,14 @@ globalVariables(c("points"))
 
 .create_point_fetching_env <- function(project_path) {
   test_env <- new.env()
-  test_env$test <- function(desc, point, code){
+  test_env$test <- function(desc, point, code) {
     .test_available_points_set(desc, point)
     .map_to_desc_add(desc)
   }
-  test_env$points_for_all_tests <- function(points){
+  test_env$points_for_all_tests <- function(points) {
     .file_points_set(points)
   }
-  return (test_env)
+  return(test_env)
 }
 
 
@@ -90,15 +90,16 @@ globalVariables(c("points"))
 #'
 #' @usage run_available_points(project_path = getwd())
 #'
-#' @param project_path The absolute path to the root of the project being tested.
+#' @param project_path
+#' The absolute path to the root of the project being tested.
 #' Default value is current work directory
 #'
 #' @return The function does not return values
 #'
 
 
-# Checks the available points for all test in the project without running test. Creates
-# file .available_points.json in the project root.
+# Checks the available points for all test in the project without running test.
+# Creates file .available_points.json in the project root.
 #' @export
 run_available_points <- function(project_path = getwd()) {
   results <- .get_available_points(project_path)

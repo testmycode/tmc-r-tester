@@ -79,7 +79,7 @@ run_tests <- function(project_path = getwd(), print = FALSE,
     if (!addin_data$only_test_names) {
       test_env_l <- test_env_list[[ind]]
     } else {
-      test_env_l <- list(env = test_env_list, error_msg = NULL)
+      test_env_l <- test_env_list
     }
     file_results <- .run_tests_file(test_file, project_path, test_env_l)
     test_results <- c(test_results, file_results)

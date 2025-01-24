@@ -78,11 +78,11 @@
            error = .signal_sourcing_error)
   disable_interactive_on_server(test_env)
   tryCatch(expr = {
-             test_env <- .source_files(test_env, project_path, addin_data)
+             test_env_list <- .source_files(test_env, project_path, addin_data)
            },
            error     = .signal_sourcing_error,
            interrupt = .signal_sourcing_interrupt)
-  return(test_env)
+  return(test_env_list)
 }
 
 .short_name <- function(filename) {
@@ -145,7 +145,7 @@
   if (addin_data$only_test_names) {
     # we don't source. This is in the wrong place. This needs to
     # be fixed.
-    return(test_env)
+    return(list(env = test_env, error_msg = NULL))
   }
 
   exercise_files     <- .path_to_excersise_files(project_path)
@@ -153,9 +153,31 @@
   test_files_short   <- sapply(test_files, FUN = .short_name)
   test_files_matches <- sapply(test_files_short, FUN = .test_name_match)
   test_env_list      <- vector("list", length(test_files) + 1)
+  # initialising the list, so that improper files
+  # will not cause too much damage
+  errmsg <- paste("Project folder broken.",
+                  "You need to redownload this exercise set",
+                  "from the server. NOTE: copy your code for safety",
+                  "since this will wipe out the template files for",
+                  "this exercise set")
+
+
+  for (ind in seq_along(test_files_matches)) {
+    test_env_list[[ind]] <- list(env = test_env, error_msg = errmsg)
+  }
 
   for (file in exercise_files) {
+    matching_files_inds <- which(test_files_matches == .short_name(file))
     if (!is.null(addin_data$print) && addin_data$print) {
+      if (!length(matching_files_inds)) {
+        cat("Improper exercise file:\t",
+             paste0("...",
+                    sub(pattern = dirname(dirname(dirname(dirname(file)))),
+                        replacement = "",
+                        file,
+                        fixed = TRUE)),
+             "\n")
+      } else {
        cat("Testing file:\t",
            paste0("...",
                   sub(pattern = dirname(dirname(dirname(dirname(file)))),
@@ -163,10 +185,10 @@
                       file,
                       fixed = TRUE)),
            "\n")
+      }
     }
     test_env <- .source_safely2(file, test_env)
 
-    matching_files_inds <- which(test_files_matches == .short_name(file))
     for (ind in matching_files_inds) {
       test_env_list[[ind]] <- test_env
     }

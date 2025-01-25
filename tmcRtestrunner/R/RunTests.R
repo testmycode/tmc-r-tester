@@ -97,14 +97,20 @@ run_tests <- function(project_path = getwd(), print = FALSE,
                                                      reporter = "silent",
                                                      env = test_env)
                               },
-                              error = .signal_run_error)
-
+                              interrupt = .signal_interrupt,
+                              error     = .signal_run_error)
   test_file_results <- .create_file_results(test_file_output,
                                             points,
                                             .GlobalEnv$points_for_all_tests,
                                                     # <--- FIX THIS
                                             test_env_l$error_msg)
   return(test_file_results)
+}
+
+.signal_sourcing_interrupt <- function(int) {
+  sourcing_error <- simpleError(message = "User interrupt", call = NULL)
+  class(sourcing_error) <- c("sourcing_error", class(sourcing_error))
+  signalCondition(sourcing_error)
 }
 
 .signal_sourcing_error <- function(error) {
@@ -133,6 +139,12 @@ run_tests <- function(project_path = getwd(), print = FALSE,
   return(list("run_status"   = "sourcing_failed",
               "backtrace"    = backtrace,
               "test_results" = list()))
+}
+
+.signal_interrupt <- function(int) {
+  run_error <- simpleError(message = "User interrupt", call = NULL)
+  class(run_error) <- c("run_error", class(run_error))
+  signalCondition(run_error)
 }
 
 .signal_run_error <- function(error) {

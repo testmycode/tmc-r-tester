@@ -5,7 +5,18 @@
   points_for_all_tests  <- function(points) {
     .GlobalEnv$points_for_all_tests <- points
   }
+  setup_testthat_env <- function(call_env) {
+    if (!("expect_equal" %in% ls(call_env))) {
+      testthat_env <- as.environment(which("package:testthat" == search()))
+      for (name in ls(testthat_env)) {
+        val <- get(name, envir = testthat_env)
+	assign(name, value = val, envir = call_env)
+      }
+    }
+  }
   test <- function(desc, points, code, timeout = 30) {
+    call_env <- as.environment(-1L)
+    setup_testthat_env(call_env)
     .GlobalEnv$points[[desc]] <- points
     value <- withTimeout(timeout = timeout,
                          expr    = testthat::test_that(desc, code))
@@ -69,7 +80,8 @@
   tryCatch(expr = {
              test_env <- .source_files(test_env, project_path, addin_data)
            },
-           error = .signal_sourcing_error)
+           error     = .signal_sourcing_error,
+           interrupt = .signal_sourcing_interrupt)
   return(test_env)
 }
 
@@ -118,7 +130,14 @@
     return(list(env       = test_env,
                 error_msg = err$message))
   }
-  test_env <- tryCatch(expr = wrapper_fn(), error = error_handler)
+  interrupt_handler <- function(int) {
+    cat(paste("Sourcing interrupted:", "<interrupt:>", sep = "\n"))
+    return(list(env       = test_env,
+                error_msg = "<User interrupted tests>"))
+  }
+  test_env <- tryCatch(expr	 = wrapper_fn(),
+		       error	 = error_handler,
+		       interrupt = interrupt_handler)
   return(test_env)
 }
 
